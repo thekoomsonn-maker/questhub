@@ -55,6 +55,7 @@ export async function SiteHeader() {
         </div>
         <nav className="ml-auto flex items-center gap-1 md:ml-0" aria-label="Account">
           <Link href="/store" className="px-2 text-sm font-medium text-ink-soft hover:text-brand">Store</Link>
+          <Link href="/shops" className="hidden px-2 text-sm font-medium text-ink-soft hover:text-brand lg:inline">Shops</Link>
           <Link href="/airtime" className="hidden px-2 text-sm font-medium text-ink-soft hover:text-brand lg:inline">Airtime</Link>
           <IconLink href="/cart" label="Cart" count={cart.count}>
             <ShoppingCart size={20} />

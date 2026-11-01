@@ -45,7 +45,9 @@ export function ListingWizard({
   regions,
   attributes,
   initial,
+  shopActive = false,
 }: {
+  shopActive?: boolean;
   userId: string;
   categories: CategoryNode[];
   regions: Region[];
@@ -316,6 +318,14 @@ export function ListingWizard({
                 <label className="flex items-center gap-2 self-end pb-3 text-sm">
                   <input type="checkbox" {...register("isNegotiable")} className="h-4 w-4 accent-[var(--brand)]" /> Price is negotiable
                 </label>
+                {shopActive ? (
+                  <label className="flex items-start gap-2 rounded-[var(--radius-field)] border border-line bg-paper p-3 text-sm sm:col-span-2">
+                    <input type="checkbox" {...register("orderable")} className="mt-0.5 h-4 w-4 accent-[var(--brand)]" />
+                    <span><span className="font-medium">Let buyers order this online from my shop</span><span className="block text-xs text-ink-soft">Buyers add it to their cart and pay you directly. Quantity above is your stock; it goes down as orders come in. Needs a price.</span></span>
+                  </label>
+                ) : (
+                  <p className="text-xs text-ink-faint sm:col-span-2">Want buyers to order online? <a href="/seller-dashboard/shop" className="text-brand underline">Open a shop</a>.</p>
+                )}
               </div>
             ) : null}
 

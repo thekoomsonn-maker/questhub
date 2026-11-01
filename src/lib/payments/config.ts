@@ -43,3 +43,27 @@ export function basicAuth() {
   const h = hubtel();
   return `Basic ${Buffer.from(`${h.clientId}:${h.clientSecret}`).toString("base64")}`;
 }
+
+/** Crypto via NOWPayments. Off unless explicitly enabled and fully configured. */
+export function cryptoConfigured() {
+  return process.env.CRYPTO_PAYMENTS === "on" && Boolean(process.env.NOWPAYMENTS_API_KEY && process.env.NOWPAYMENTS_IPN_SECRET);
+}
+
+export function nowpayments() {
+  return {
+    apiKey: process.env.NOWPAYMENTS_API_KEY ?? "",
+    ipnSecret: process.env.NOWPAYMENTS_IPN_SECRET ?? "",
+    baseUrl: process.env.NOWPAYMENTS_API_URL ?? "https://api.nowpayments.io/v1",
+  };
+}
+
+/**
+ * Crypto is offered when: payments are in test mode (simulated), or live with
+ * NOWPayments configured. In both cases an admin must set a GH₵/US$ rate.
+ */
+export function cryptoMode(): "off" | "test" | "live" {
+  const mode = paymentsMode();
+  if (mode === "test" && process.env.CRYPTO_PAYMENTS !== "off") return "test";
+  if (process.env.PAYMENTS_MODE === "live" && cryptoConfigured()) return "live";
+  return "off";
+}

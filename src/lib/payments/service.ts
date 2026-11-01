@@ -3,8 +3,10 @@ import { randomBytes } from "node:crypto";
 import { createServiceClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 import { log } from "@/lib/log";
-import { hubtel, paymentsMode } from "./config";
-import { hubtelCheckout, hubtelTopup, testTopup, type Verification } from "./providers";
+import { cryptoMode, hubtel, paymentsMode } from "./config";
+import { hubtelCheckout, hubtelTopup, nowpaymentsApi, testTopup, type CryptoPayment, type Verification } from "./providers";
+
+export type PaymentMethod = "mobile_money_card" | "crypto";
 
 /**
  * All payment state changes happen here, with the service role, after the
@@ -17,9 +19,16 @@ function newReference(orderNumber: string) {
   return `${orderNumber}-${randomBytes(5).toString("hex")}`.slice(0, 32);
 }
 
-export async function startCheckout(orderId: string, userId: string, email?: string): Promise<{ url: string }> {
-  const mode = paymentsMode();
-  if (mode === "off") throw new Error("Online payment isn't available yet.");
+/** GH₵ per US$1 from admin settings, or null if crypto pricing isn't set up. */
+export async function cryptoRate(): Promise<number | null> {
+  const { data } = await createServiceClient().from("platform_settings").select("value").eq("key", "crypto_usd_rate").single();
+  const rate = Number(data?.value);
+  return Number.isFinite(rate) && rate > 0 ? rate : null;
+}
+
+export async function startCheckout(orderId: string, userId: string, email?: string, method: PaymentMethod = "mobile_money_card"): Promise<{ url: string }> {
+  const mode = method === "crypto" ? cryptoMode() : paymentsMode();
+  if (mode === "off") throw new Error(method === "crypto" ? "Crypto payments aren't available." : "Online payment isn't available yet.");
   const db = createServiceClient();
   const { data: order } = await db.from("orders").select("*").eq("id", orderId).eq("user_id", userId).single();
   if (!order) throw new Error("Order not found.");
@@ -27,9 +36,19 @@ export async function startCheckout(orderId: string, userId: string, email?: str
   if (new Date(order.expires_at) < new Date()) throw new Error("This order expired. Place it again.");
 
   const reference = newReference(order.order_number);
+  let usd: { amount: number; rate: number } | null = null;
+  if (method === "crypto") {
+    const rate = await cryptoRate();
+    if (!rate) throw new Error("Crypto payments aren't available right now.");
+    // Round up to the cent so the invoice never undercharges
+    usd = { amount: Math.ceil((Number(order.total) / rate) * 100) / 100, rate };
+    if (usd.amount < 1) throw new Error("Crypto payments need an order of at least US$1.");
+  }
   const { error } = await db.from("payments").insert({
-    user_id: userId, purpose: "order", order_id: order.id, provider: mode === "live" ? "hubtel" : "test",
+    user_id: userId, purpose: "order", order_id: order.id, method,
+    provider: mode !== "live" ? "test" : method === "crypto" ? "nowpayments" : "hubtel",
     reference, amount: order.total, currency: order.currency, status: "pending",
+    provider_amount: usd?.amount ?? null, provider_currency: usd ? "USD" : null, fx_rate: usd?.rate ?? null,
   });
   if (error) throw new Error("Couldn't start payment. Try again.");
   await db.from("orders").update({ payment_status: "pending" }).eq("id", order.id).in("payment_status", ["unpaid", "failed"]);
@@ -37,6 +56,18 @@ export async function startCheckout(orderId: string, userId: string, email?: str
   if (mode === "test") return { url: `/checkout/test/${encodeURIComponent(reference)}` };
 
   const base = env.siteUrl;
+  if (method === "crypto" && usd) {
+    const session = await nowpaymentsApi.createInvoice({
+      reference,
+      amountUsd: usd.amount,
+      description: `QuestHub order ${order.order_number}`,
+      successUrl: `${base}/orders/${order.id}?return=1`,
+      cancelUrl: `${base}/orders/${order.id}?cancelled=1`,
+      ipnUrl: `${base}/api/payments/nowpayments/ipn`,
+    });
+    await db.from("payments").update({ checkout_id: session.checkoutId }).eq("reference", reference);
+    return { url: session.checkoutUrl };
+  }
   const token = hubtel().callbackToken;
   const session = await hubtelCheckout.create({
     reference,
@@ -65,8 +96,10 @@ export async function applyVerification(reference: string, v: Verification, even
   if (eventError?.code === "23505") return { ok: true as const, duplicate: true }; // already processed this event
 
   if (v.status === "paid") {
-    if (v.amount !== null && Math.abs(v.amount - Number(payment.amount)) > 0.009) {
-      log.error("payment.amount_mismatch", { reference, expected: payment.amount, got: v.amount });
+    // Compare in the currency the provider was asked to charge (USD for crypto invoices)
+    const expected = Number(payment.provider_amount ?? payment.amount);
+    if (v.amount !== null && Math.abs(v.amount - expected) > 0.009) {
+      log.error("payment.amount_mismatch", { reference, expected, got: v.amount });
       await db.from("payments").update({ status: "failed" }).eq("id", payment.id);
       return { ok: false as const, reason: "amount mismatch" };
     }
@@ -95,8 +128,19 @@ export async function applyVerification(reference: string, v: Verification, even
 
 /** Verifies the latest pending payment for an order (used on the return page). */
 export async function refreshOrderPayment(orderId: string) {
-  if (paymentsMode() !== "live") return;
+  if (paymentsMode() !== "live" && cryptoMode() !== "live") return;
   const db = createServiceClient();
+  // Crypto: only checkable once NOWPayments has told us the payment id
+  const { data: crypto } = await db.from("payments").select("provider_payment_id")
+    .eq("order_id", orderId).eq("provider", "nowpayments").eq("status", "pending").not("provider_payment_id", "is", null)
+    .order("created_at", { ascending: false }).limit(1).maybeSingle();
+  if (crypto?.provider_payment_id) {
+    try {
+      await applyCryptoStatus(await nowpaymentsApi.getPayment(crypto.provider_payment_id));
+    } catch (e) {
+      log.warn("crypto.refresh_failed", { orderId, error: e instanceof Error ? e.message : "unknown" });
+    }
+  }
   const { data: payment } = await db.from("payments").select("reference,status,provider")
     .eq("order_id", orderId).eq("provider", "hubtel").eq("status", "pending").order("created_at", { ascending: false }).limit(1).maybeSingle();
   if (!payment) return;
@@ -126,4 +170,36 @@ export async function fulfilTopup(orderId: string) {
   await db.rpc("record_topup_result", {
     p_order: orderId, p_delivered: result.state === "delivered", p_provider_reference: result.providerReference ?? undefined, p_error: result.error ?? undefined,
   });
+}
+
+/**
+ * Applies a NOWPayments status that we fetched ourselves (never the raw
+ * webhook body). Partial payments are held for staff review.
+ */
+export async function applyCryptoStatus(cp: CryptoPayment) {
+  const db = createServiceClient();
+  const { data: payment } = await db.from("payments").select("id,reference,provider,provider_currency,order_id,status").eq("reference", cp.orderReference).maybeSingle();
+  if (!payment || payment.provider !== "nowpayments") return { ok: false as const, reason: "unknown reference" };
+  await db.from("payments").update({ provider_payment_id: cp.paymentId, pay_currency: cp.payCurrency }).eq("id", payment.id);
+
+  if (cp.priceCurrency !== (payment.provider_currency ?? "USD")) {
+    log.error("crypto.currency_mismatch", { reference: payment.reference, got: cp.priceCurrency });
+    return { ok: false as const, reason: "currency mismatch" };
+  }
+  if (cp.status === "partial") {
+    const { error } = await db.from("payment_events").insert({
+      payment_id: payment.id, provider: "nowpayments", provider_event_id: `nowpayments:${cp.paymentId}:partially_paid`,
+      event_type: "verify.partial", status_before: payment.status, status_after: payment.status, payload: (cp.raw ?? {}) as never,
+    });
+    if (!error && payment.order_id) {
+      await db.from("order_events").insert({ order_id: payment.order_id, status: "payment_partial", note: `Customer underpaid in ${cp.payCurrency ?? "crypto"}. Resolve in the NOWPayments dashboard (refund or request the difference).` });
+    }
+    return { ok: true as const };
+  }
+  if (cp.status === "pending") return { ok: true as const };
+  return applyVerification(
+    payment.reference,
+    { status: cp.status, amount: cp.priceAmount, providerTransactionId: cp.paymentId, channel: `crypto:${cp.payCurrency ?? "unknown"}`, raw: cp.raw },
+    `nowpayments:${cp.paymentId}:${cp.rawStatus}`,
+  );
 }

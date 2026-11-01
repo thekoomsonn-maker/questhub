@@ -1,5 +1,6 @@
 import "server-only";
-import { basicAuth, hubtel } from "./config";
+import { createHmac, timingSafeEqual } from "node:crypto";
+import { basicAuth, hubtel, nowpayments } from "./config";
 import { log } from "@/lib/log";
 
 export type CheckoutRequest = {
@@ -130,5 +131,93 @@ export const testTopup = {
   async send(req: TopupRequest): Promise<TopupResult> {
     if (req.recipient.endsWith("000")) return { state: "failed", providerReference: null, error: "Test mode: simulated network failure" };
     return { state: "delivered", providerReference: `TEST-${req.reference}`, error: null };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// NOWPayments (crypto)
+// ---------------------------------------------------------------------------
+
+/** Recursively sorts object keys, matching NOWPayments' signature scheme. */
+function sortKeys(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(sortKeys);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.keys(value as object).sort().map((k) => [k, sortKeys((value as Record<string, unknown>)[k])]));
+  }
+  return value;
+}
+
+export function verifyNowpaymentsSignature(rawBody: string, signature: string | null, secret: string): boolean {
+  if (!signature || !secret) return false;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(rawBody);
+  } catch {
+    return false;
+  }
+  const expected = createHmac("sha512", secret).update(JSON.stringify(sortKeys(parsed))).digest("hex");
+  const a = Buffer.from(expected);
+  const b = Buffer.from(signature.toLowerCase());
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
+export type CryptoPayment = {
+  paymentId: string;
+  orderReference: string;
+  status: "paid" | "pending" | "partial" | "failed";
+  rawStatus: string;
+  priceAmount: number;
+  priceCurrency: string;
+  payCurrency: string | null;
+  raw: unknown;
+};
+
+export function mapNowpaymentsStatus(s: string): CryptoPayment["status"] {
+  if (s === "finished") return "paid";
+  if (s === "partially_paid") return "partial";
+  if (s === "failed" || s === "expired" || s === "refunded") return "failed";
+  return "pending"; // waiting, confirming, confirmed, sending
+}
+
+export const nowpaymentsApi = {
+  async createInvoice(req: { reference: string; amountUsd: number; description: string; successUrl: string; cancelUrl: string; ipnUrl: string }) {
+    const n = nowpayments();
+    const r = await fetchJson(`${n.baseUrl}/invoice`, {
+      method: "POST",
+      headers: { "x-api-key": n.apiKey, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        price_amount: req.amountUsd,
+        price_currency: "usd",
+        order_id: req.reference,
+        order_description: req.description.slice(0, 100),
+        ipn_callback_url: req.ipnUrl,
+        success_url: req.successUrl,
+        cancel_url: req.cancelUrl,
+      }),
+    });
+    const url = r.body?.invoice_url as string | undefined;
+    if (!r.ok || !url) {
+      log.error("nowpayments.invoice_failed", { httpStatus: r.status });
+      throw new Error("The crypto payment page couldn't be opened. Try again or pay with Mobile Money.");
+    }
+    return { checkoutUrl: url, checkoutId: String(r.body?.id ?? "") || null };
+  },
+
+  /** Authoritative status straight from NOWPayments. */
+  async getPayment(paymentId: string): Promise<CryptoPayment> {
+    const n = nowpayments();
+    const r = await fetchJson(`${n.baseUrl}/payment/${encodeURIComponent(paymentId)}`, { headers: { "x-api-key": n.apiKey } });
+    if (!r.ok || !r.body) throw new Error(`NOWPayments status check failed (${r.status})`);
+    const b = r.body;
+    return {
+      paymentId: String(b.payment_id ?? paymentId),
+      orderReference: String(b.order_id ?? ""),
+      status: mapNowpaymentsStatus(String(b.payment_status ?? "")),
+      rawStatus: String(b.payment_status ?? ""),
+      priceAmount: Number(b.price_amount),
+      priceCurrency: String(b.price_currency ?? "").toUpperCase(),
+      payCurrency: (b.pay_currency as string) ?? null,
+      raw: b,
+    };
   },
 };

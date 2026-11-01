@@ -9,7 +9,7 @@ export default async function AdminPromotions() {
   const supabase = await createClient();
   const [{ data: plans }, { data: promos }, { data: testMode }] = await Promise.all([
     supabase.from("promotion_plans").select("*").order("sort_order"),
-    supabase.from("promotions").select("id,kind,amount,currency,duration_days,status,payment_status,starts_at,ends_at,created_at,listing:listings(title,slug),seller:profiles!promotions_seller_id_fkey(display_name)").order("created_at", { ascending: false }).limit(100),
+    supabase.from("promotions").select("id,kind,amount,currency,duration_days,status,payment_status,starts_at,ends_at,created_at,listing:listings(title,slug),shop:shops(name,slug),seller:profiles!promotions_seller_id_fkey(display_name)").order("created_at", { ascending: false }).limit(100),
     supabase.from("platform_settings").select("value").eq("key", "promotions_test_mode").single(),
   ]);
   const isTest = testMode?.value === true;
@@ -24,7 +24,7 @@ export default async function AdminPromotions() {
       <Table head={["Listing", "Seller", "Plan", "Status", "Actions"]} empty={!promos?.length}>
         {promos?.map((p) => (
           <tr key={p.id}>
-            <td className="px-3 py-3">{p.listing ? <Link href={`/listing/${p.listing.slug}`} target="_blank" className="hover:text-brand">{p.listing.title}</Link> : "Deleted"}</td>
+            <td className="px-3 py-3">{p.shop ? <Link href={`/shop/${p.shop.slug}`} target="_blank" className="hover:text-brand">Shop: {p.shop.name}</Link> : p.listing ? <Link href={`/listing/${p.listing.slug}`} target="_blank" className="hover:text-brand">{p.listing.title}</Link> : "Deleted"}</td>
             <td className="px-3 py-3 text-ink-soft">{p.seller?.display_name}</td>
             <td className="px-3 py-3 text-ink-soft">{p.kind} · {p.duration_days}d · {formatPrice(p.amount, p.currency)}</td>
             <td className="px-3 py-3">

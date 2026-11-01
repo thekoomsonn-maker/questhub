@@ -92,7 +92,7 @@ test("3-8. publish, favourite, message, privacy, report and admin removal", asyn
   await buyerPage.goto(`/search?q=${encodeURIComponent(title)}`);
   await buyerPage.getByRole("link", { name: title }).click();
   await buyerPage.locator("main").getByRole("button", { name: "Save listing" }).click();
-  await expect(buyerPage.locator("main").getByRole("button", { name: "Remove from saved" })).toBeVisible();
+  await expect(buyerPage.locator("main").getByRole("button", { name: "Remove from saved" })).toBeEnabled(); // save finished
   await buyerPage.goto("/favorites");
   await expect(buyerPage.getByRole("link", { name: title })).toBeVisible();
   await buyerPage.reload();
@@ -105,16 +105,17 @@ test("3-8. publish, favourite, message, privacy, report and admin removal", asyn
   const conversationUrl = buyerPage.url();
   await buyerPage.getByLabel("Message", { exact: true }).fill("Hello, is the desk still available?");
   await buyerPage.getByRole("button", { name: "Send" }).click();
-  await expect(buyerPage.getByLabel("Messages", { exact: true }).getByText("Hello, is the desk still available?")).toBeVisible();
+  await expect(buyerPage.getByRole("log", { name: "Messages" }).getByText("Hello, is the desk still available?")).toBeVisible();
 
   // 6. Seller sees it and replies; buyer receives it (after reload at least)
   await sellerPage.goto("/messages");
   await sellerPage.getByRole("link", { name: /E2E buyer/ }).click();
-  await expect(sellerPage.getByLabel("Messages", { exact: true }).getByText("Hello, is the desk still available?")).toBeVisible();
+  await expect(sellerPage.getByRole("log", { name: "Messages" }).getByText("Hello, is the desk still available?")).toBeVisible();
   await sellerPage.getByLabel("Message", { exact: true }).fill("Yes, come by tomorrow.");
   await sellerPage.getByRole("button", { name: "Send" }).click();
+  await expect(sellerPage.getByRole("log", { name: "Messages" }).getByText("Yes, come by tomorrow.")).toBeVisible();
   await buyerPage.reload();
-  await expect(buyerPage.getByLabel("Messages", { exact: true }).getByText("Yes, come by tomorrow.")).toBeVisible();
+  await expect(buyerPage.getByRole("log", { name: "Messages" }).getByText("Yes, come by tomorrow.")).toBeVisible();
 
   // 7. An outsider cannot read the conversation
   const outsiderPage = await (await browser.newContext()).newPage();

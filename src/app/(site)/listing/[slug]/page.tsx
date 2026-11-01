@@ -15,6 +15,8 @@ import { FavoriteButton } from "@/components/listings/favorite-button";
 import { ListingCard, LocationLabel, Price } from "@/components/listings/listing-card";
 import { ReportButton } from "@/components/report-button";
 import { UserAvatar } from "@/components/user-avatar";
+import { AddToShopCart } from "@/components/shops/add-to-shop-cart";
+import { ShopLogo } from "@/components/shops/shop-card";
 import { Badge, Card } from "@/components/ui/misc";
 import { ButtonLink } from "@/components/ui/button";
 import { FormMessage } from "@/components/ui/field";
@@ -48,13 +50,15 @@ export default async function ListingPage({ params }: PageProps<"/listing/[slug]
   if (!listing) notFound();
 
   const supabase = await createClient();
-  const [viewer, favs, stats, sharesPhone, similar] = await Promise.all([
+  const [viewer, favs, stats, sharesPhone, similar, { data: shop }] = await Promise.all([
     getViewer(),
     getFavoriteIds(),
     getSellerStats(listing.seller_id),
     supabase.rpc("seller_shares_phone", { p_seller: listing.seller_id }),
     searchListings({ categoryId: listing.category_id, pageSize: 5, sort: "newest" }),
+    supabase.from("shops").select("slug,name,logo_path,is_verified,accepts_pay_on_delivery,accepts_momo,status").eq("owner_id", listing.seller_id).eq("status", "active").maybeSingle(),
   ]);
+  const canOrderOnline = Boolean(shop && listing.orderable && listing.status === "published" && listing.quantity > 0 && listing.price !== null);
 
   const isOwner = viewer?.id === listing.seller_id;
   const isLive = listing.status === "published";
@@ -143,6 +147,15 @@ export default async function ListingPage({ params }: PageProps<"/listing/[slug]
                   <ButtonLink href="/seller-dashboard/listings" variant="secondary">Manage listings</ButtonLink>
                 </div>
               ) : (
+                <>
+                {canOrderOnline ? (
+                  <div className="mb-3 flex flex-col gap-1.5">
+                    <AddToShopCart listingId={listing.id} stock={listing.quantity} signedIn={Boolean(viewer)} />
+                    <p className="text-xs text-ink-soft">
+                      {listing.quantity <= 5 ? `Only ${listing.quantity} left. ` : ""}Pay {shop!.name} directly{shop!.accepts_pay_on_delivery ? " on delivery" : ""}{shop!.accepts_momo ? `${shop!.accepts_pay_on_delivery ? " or" : ""} by MoMo` : ""}.
+                    </p>
+                  </div>
+                ) : null}
                 <ContactActions
                   listingId={listing.id}
                   slug={listing.slug}
@@ -151,11 +164,24 @@ export default async function ListingPage({ params }: PageProps<"/listing/[slug]
                   phoneAvailable={Boolean(sharesPhone.data)}
                   signedIn={Boolean(viewer)}
                 />
+                </>
               )}
             </div>
             <div className="mt-3 flex justify-end"><ShareButton title={listing.title} /></div>
           </Card>
 
+          {shop ? (
+            <Card className="p-4">
+              <Link href={`/shop/${shop.slug}`} className="flex items-center gap-3 hover:text-brand">
+                <ShopLogo path={shop.logo_path} name={shop.name} size={44} />
+                <span className="min-w-0">
+                  <span className="block text-xs text-ink-faint">Sold by</span>
+                  <span className="block truncate font-medium">{shop.name}</span>
+                </span>
+                <span className="ml-auto text-sm text-brand">Visit shop</span>
+              </Link>
+            </Card>
+          ) : null}
           {seller ? (
             <Card className="p-5">
               <Link href={`/seller/${seller.username ?? seller.id}`} className="flex items-center gap-3 hover:text-brand">

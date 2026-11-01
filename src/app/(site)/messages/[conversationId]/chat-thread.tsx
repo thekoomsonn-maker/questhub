@@ -30,6 +30,17 @@ export function ChatThread({
 }) {
   const router = useRouter();
   const [messages, setMessages] = useState(initial);
+  // When the page refreshes (e.g. after marking read), merge the server's latest
+  // messages in, so nothing is lost if a realtime event arrived before we subscribed.
+  const [prevInitial, setPrevInitial] = useState(initial);
+  if (initial !== prevInitial) {
+    setPrevInitial(initial);
+    setMessages((prev) => {
+      const byId = new Map(prev.map((m) => [m.id, m]));
+      for (const m of initial) byId.set(m.id, m);
+      return [...byId.values()].sort((a, b) => a.created_at.localeCompare(b.created_at));
+    });
+  }
   const [hasMore, setHasMore] = useState(initial.length >= 40);
   const [draft, setDraft] = useState("");
   const [sending, startSend] = useTransition();
@@ -104,6 +115,7 @@ export function ChatThread({
           stick.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
         }}
         className="flex-1 overflow-y-auto px-3 py-4"
+        role="log"
         aria-live="polite"
         aria-label="Messages"
       >

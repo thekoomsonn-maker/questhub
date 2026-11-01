@@ -6,6 +6,8 @@ import { getFeaturedListings, searchListings } from "@/lib/data/listings";
 import { getFavoriteIds } from "@/lib/data/viewer";
 import { getProducts } from "@/lib/data/store";
 import { ProductCard } from "@/components/store/product-card";
+import { listShops } from "@/lib/data/shops";
+import { ShopCard } from "@/components/shops/shop-card";
 import { getViewer } from "@/lib/auth";
 import { SearchBar } from "@/components/layout/search-bar";
 import { ListingCard, ListingGrid } from "@/components/listings/listing-card";
@@ -75,6 +77,10 @@ export default async function HomePage() {
           <StoreRow />
         </Suspense>
 
+        <Suspense fallback={null}>
+          <FeaturedShops />
+        </Suspense>
+
         <Suspense fallback={<GridSkeleton title="Featured" />}>
           <Featured />
         </Suspense>
@@ -133,6 +139,24 @@ async function StoreRow() {
           <span className="inline-flex h-10 w-fit items-center rounded-full bg-ink px-4 text-sm font-medium text-white">Top up now</span>
         </Link>
       </div>
+    </section>
+  );
+}
+
+async function FeaturedShops() {
+  const featured = await listShops({ featuredOnly: true, limit: 4 });
+  const shops = featured.length ? featured : await listShops({ limit: 4 });
+  if (!shops.length) return null;
+  return (
+    <section className="py-6" aria-labelledby="shops">
+      <div className="mb-4 flex items-baseline justify-between">
+        <h2 id="shops" className="font-display text-xl font-semibold">
+          {featured.length ? "Featured shops" : "Shops on QuestHub"}
+          {featured.length ? <span className="ml-2 text-xs font-normal text-ink-faint">Paid placements</span> : null}
+        </h2>
+        <Link href="/shops" className="text-sm font-medium text-brand hover:underline">All shops</Link>
+      </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{shops.map((s) => <ShopCard key={s.id} shop={s} />)}</div>
     </section>
   );
 }

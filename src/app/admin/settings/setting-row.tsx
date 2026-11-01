@@ -20,6 +20,13 @@ const labels: Record<string, string> = {
   max_new_conversations_per_hour: "New chats per buyer per hour",
   promotions_test_mode: "Promotion test mode",
   checkout_enabled: "Online checkout",
+  crypto_usd_rate: "Crypto exchange rate (GH₵ per US$1)",
+  delivery_fee_default: "Default delivery fee (GH₵)",
+  delivery_fees: "Delivery fee per region (JSON)",
+  free_delivery_over: "Free delivery from (GH₵)",
+  airtime_min: "Smallest airtime top-up (GH₵)",
+  airtime_max: "Largest airtime top-up (GH₵)",
+  shops_require_approval: "Review new shops before they go live",
 };
 
 export function SettingRow({ setting }: { setting: { key: string; value: Json; description: string | null } }) {
@@ -49,7 +56,7 @@ export function SettingRow({ setting }: { setting: { key: string; value: Json; d
           ) : Array.isArray(setting.value) ? (
             <Textarea id={id} value={value} onChange={(e) => setValue(e.target.value)} className="w-64" rows={5} />
           ) : (
-            <Input id={id} value={value} onChange={(e) => setValue(e.target.value)} className="h-10 w-28" inputMode="numeric" />
+            <Input id={id} value={value} onChange={(e) => setValue(e.target.value)} className={typeof setting.value === "object" ? "h-10 w-64 font-mono text-xs" : "h-10 w-28"} inputMode={typeof setting.value === "number" ? "decimal" : undefined} />
           )}
           <Button type="submit" size="md" variant="secondary" pending={pending} disabled={value === initial || setting.key === "checkout_enabled"}>Save</Button>
         </div>

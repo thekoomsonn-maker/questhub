@@ -20,10 +20,13 @@ const deliverySchema = z.object({
   notes: z.string().trim().max(500).optional(),
 });
 
-async function pay(orderId: string, userId: string, email?: string): Promise<never> {
+type Method = "mobile_money_card" | "crypto";
+const methodOf = (v: FormDataEntryValue | null): Method => (v === "crypto" ? "crypto" : "mobile_money_card");
+
+async function pay(orderId: string, userId: string, email?: string, method: Method = "mobile_money_card"): Promise<never> {
   let url: string;
   try {
-    url = (await startCheckout(orderId, userId, email)).url;
+    url = (await startCheckout(orderId, userId, email, method)).url;
   } catch (e) {
     log.warn("checkout.start_failed", { orderId, error: e instanceof Error ? e.message : "unknown" });
     redirect(`/orders/${orderId}?payment=unavailable`);
@@ -45,13 +48,13 @@ export async function placeGoodsOrder(_: ActionResult | null, form: FormData): P
   });
   if (error) return { ok: false, error: friendlyError(error) };
   revalidatePath("/", "layout");
-  return pay(orderId, viewer.id, viewer.email);
+  return pay(orderId, viewer.id, viewer.email, methodOf(form.get("method")));
 }
 
-export async function payExistingOrder(orderId: string): Promise<void> {
+export async function payExistingOrder(orderId: string, method: Method = "mobile_money_card"): Promise<void> {
   const viewer = await getViewer();
   if (!viewer || !z.uuid().safeParse(orderId).success) redirect("/orders");
-  await pay(orderId, viewer.id, viewer.email);
+  await pay(orderId, viewer.id, viewer.email, method === "crypto" ? "crypto" : "mobile_money_card");
 }
 
 export async function cancelOrder(orderId: string): Promise<ActionResult> {

@@ -30,11 +30,13 @@ export function ListingCard({
   favorited,
   signedIn,
   priority = false,
+  buyOnline = false,
 }: {
   listing: ListingSummary;
   favorited?: boolean;
   signedIn?: boolean;
   priority?: boolean;
+  buyOnline?: boolean;
 }) {
   const img = listingImageUrl(listing.cover_path);
   const promoted = listing.is_featured || listing.is_boosted;
@@ -79,6 +81,7 @@ export function ListingCard({
           {conditionLabel[listing.condition] ? (
             <span className="text-[11px] font-medium text-ink-soft">{conditionLabel[listing.condition]}</span>
           ) : null}
+          {buyOnline ? <span className="text-[11px] font-semibold text-brand">Order online</span> : null}
           {listing.seller_verified ? (
             <span className="flex items-center gap-0.5 text-[11px] font-medium text-success">
               <ShieldCheck size={12} aria-hidden /> Verified seller

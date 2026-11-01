@@ -66,11 +66,13 @@ export const listingSchema = z.object({
     .transform((v) => (v === "" ? null : v)),
   isNegotiable: z.boolean(),
   condition: z.enum(conditionValues),
-  quantity: z.coerce.number().int().min(1).max(100000),
+  quantity: z.coerce.number().int().min(0).max(100000),
   regionId: z.coerce.number().int().min(1, "Choose a region").max(16),
   city: z.string().trim().min(2, "Enter the town or area").max(80),
   attributes: z.record(z.string(), z.union([z.string(), z.number(), z.boolean(), z.null()])),
-});
+  orderable: z.boolean().optional(),
+}).refine((v) => !v.orderable || v.price !== null, { path: ["price"], message: "Set a price to sell online" })
+  .refine((v) => !v.orderable || v.quantity > 0, { path: ["quantity"], message: "Add stock to sell online" });
 export type ListingInput = z.input<typeof listingSchema>;
 
 export const reportSchema = z.object({

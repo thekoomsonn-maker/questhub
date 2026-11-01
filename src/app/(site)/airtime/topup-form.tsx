@@ -10,14 +10,16 @@ import { detectNetwork, networks, normaliseGhanaNumber, type Network } from "@/l
 import type { ActionResult } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { buyTopup } from "./actions";
+import { PaymentMethodPicker, type PaymentMethodOption } from "@/components/store/payment-method";
 
 type Bundle = { id: string; network: Network; name: string; data_mb: number | null; validity: string | null; price: number };
 
 const presets = [5, 10, 20, 50, 100];
 
-export function TopupForm({ bundles, min, max, signedIn, defaultNumber, disabled }: {
-  bundles: Bundle[]; min: number; max: number; signedIn: boolean; defaultNumber: string; disabled: boolean;
+export function TopupForm({ bundles, min, max, signedIn, defaultNumber, disabled, paymentOptions }: {
+  bundles: Bundle[]; min: number; max: number; signedIn: boolean; defaultNumber: string; disabled: boolean; paymentOptions: PaymentMethodOption;
 }) {
+  const [method, setMethod] = useState<"mobile_money_card" | "crypto">("mobile_money_card");
   const [state, action, pending] = useActionState<ActionResult | null, FormData>(buyTopup, null);
   const [type, setType] = useState<"airtime" | "data">("airtime");
   const [number, setNumber] = useState(defaultNumber);
@@ -101,6 +103,7 @@ export function TopupForm({ bundles, min, max, signedIn, defaultNumber, disabled
         )}
       </Card>
 
+      <PaymentMethodPicker value={method} onChange={setMethod} options={paymentOptions} totalGhs={price} />
       {signedIn ? (
         <Button type="submit" size="lg" pending={pending} disabled={disabled || !valid || !network || price <= 0}>
           Pay {price > 0 ? formatPrice(price) : ""}

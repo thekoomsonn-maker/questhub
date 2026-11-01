@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getViewer } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { paymentsMode } from "@/lib/payments/config";
+import { paymentOptions } from "@/lib/payments/options";
 import { FormMessage } from "@/components/ui/field";
 import { TopupForm } from "./topup-form";
 
@@ -17,6 +18,7 @@ export default async function AirtimePage() {
   ]);
   const l = Object.fromEntries((limits ?? []).map((r) => [r.key, Number(r.value)]));
   const mode = paymentsMode();
+  const options = await paymentOptions();
 
   return (
     <div className="mx-auto max-w-xl px-4 py-8">
@@ -33,6 +35,7 @@ export default async function AirtimePage() {
         signedIn={Boolean(viewer)}
         defaultNumber={contacts?.phone ?? ""}
         disabled={mode === "off"}
+        paymentOptions={options}
       />
     </div>
   );

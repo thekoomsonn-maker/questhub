@@ -120,6 +120,40 @@ async function main() {
     console.log(`prod  ${p.name}`);
   }
 
+  // Ama's shop: live, verified, featured; her listings can be ordered online
+  const ama = ids["ama@questhub.local"];
+  const { data: existingShop } = await db.from("shops").select("id").eq("owner_id", ama).maybeSingle();
+  if (!existingShop) {
+    const { data: shop, error } = await db.from("shops").insert({
+      owner_id: ama, slug: "amas-gadget-hub", name: "Ama's Gadget Hub", tagline: "Phones, laptops, accessories and kente, at Circle since 2015",
+      about: "Family-run shop at Kwame Nkrumah Circle. Every phone is tested before sale and comes with a 3-month shop warranty.",
+      phone: "0241234567", whatsapp: "0241234567", region_id: 1, city: "Circle", address: "Shop 14, Kwame Nkrumah Interchange", opening_hours: "Mon–Sat 9am–7pm",
+      delivery_info: "Same-day delivery in Accra and Tema (GH₵ 25–40, paid to the rider). Pickup at the shop any day.",
+      accepts_pay_on_delivery: true, accepts_momo: true, momo_number: "0241234567", momo_name: "Ama Mensah",
+      status: "active", is_verified: true, featured_until: new Date(Date.now() + 30 * 864e5).toISOString(),
+    }).select("id").single();
+    if (error) throw error;
+    await db.from("listings").update({ orderable: true, quantity: 5 }).eq("seller_id", ama).eq("status", "published").not("price", "is", null);
+    console.log(`shop  Ama's Gadget Hub (${shop.id})`);
+  }
+
+  // Dress accessories for the store: added hidden until real product photos are uploaded
+  const accessories = [
+    ["Handwoven kente bow tie", "Bonwire Weavers", "belts-ties", 95, 30, "Hand-loomed kente bow tie with an adjustable strap. Perfect for weddings, graduations and Fridays."],
+    ["Genuine leather belt, brown, 35 mm", "Kumasi Leather Co.", "belts-ties", 140, 25, "Full-grain leather belt with a brushed brass buckle. Sizes 30–44; tell us yours in the delivery note."],
+    ["Krobo bead necklace and bracelet set", "Odumase Beads", "beads-traditional", 120, 18, "Recycled-glass Krobo beads, handmade in Odumase-Krobo. Each set is unique."],
+    ["Ankara headwrap, long", "Adinkra Styles", "hats-scarves-headwraps", 75, 40, "2-metre cotton Ankara headwrap, easy to tie in many styles. Assorted prints."],
+    ["Polarised sunglasses, unisex", "QuestHub Select", "eyewear", 110, 20, "UV400 polarised lenses in a light metal frame, with a hard case and cleaning cloth."],
+    ["Satin-lined sleep bonnet", "Adinkra Styles", "hair-accessories", 45, 50, "Double-layer satin bonnet that protects braids and natural hair overnight."],
+  ] as const;
+  for (const [name, brand, cat, price, stock, description] of accessories) {
+    const { data: exists } = await db.from("store_products").select("id").eq("name", name).maybeSingle();
+    if (exists) continue;
+    const c = cats!.find((x) => x.slug === cat);
+    await db.from("store_products").insert({ name, brand, category_id: c?.id ?? null, price, stock, description, is_active: false });
+    console.log(`prod  ${name} (hidden until photos are added)`);
+  }
+
   // Sample data bundles. Codes are placeholders: replace them with your Hubtel codes in Admin → Data bundles.
   const { count: bundleCount } = await db.from("topup_bundles").select("id", { count: "exact", head: true });
   if (!bundleCount) {

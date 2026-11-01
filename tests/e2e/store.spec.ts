@@ -37,7 +37,7 @@ test("airtime top-up is delivered after payment, and a failed one is flagged for
 
   await page.goto("/airtime");
   await page.locator("#recipient").fill("0241234567");
-  await expect(page.locator("label", { hasText: "MTN" })).toHaveClass(/border-brand/); // detected from prefix
+  await expect(page.locator("label", { hasText: /^MTN$/ })).toHaveClass(/border-brand/); // detected from prefix
   await page.getByRole("button", { name: "20", exact: true }).click();
   await page.getByRole("button", { name: /^Pay GH₵ 20/ }).click();
   await page.getByRole("button", { name: "Simulate successful payment" }).click();

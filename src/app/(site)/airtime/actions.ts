@@ -35,7 +35,7 @@ export async function buyTopup(_: ActionResult | null, form: FormData): Promise<
 
   let url: string;
   try {
-    url = (await startCheckout(orderId, viewer.id, viewer.email)).url;
+    url = (await startCheckout(orderId, viewer.id, viewer.email, form.get("method") === "crypto" ? "crypto" : "mobile_money_card")).url;
   } catch {
     redirect(`/orders/${orderId}?payment=unavailable`);
   }

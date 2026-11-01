@@ -5,6 +5,9 @@ A marketplace and online store for Ghana, with three ways to earn:
 1. **Marketplace (classifieds):** people and businesses post ads, buyers message sellers, moderators keep it clean. Revenue from paid promotions.
 2. **QuestHub Store:** products you sell directly. Cart, delivery details, payment by Mobile Money or card (Hubtel), order tracking and fulfilment.
 3. **Airtime and data:** MTN, Telecel and AirtelTigo top-ups through Hubtel, sold at your margin.
+4. **Vendor shops:** businesses open a storefront (logo, banner, hours, delivery info), list products, and take online orders. Buyers pay the vendor directly (on delivery or by MoMo to the vendor), so QuestHub never holds vendor money. Revenue from featured-shop ads and listing boosts.
+
+Customers can pay for store orders and top-ups with Mobile Money/card (Hubtel) or crypto (NOWPayments, off by default).
 
 Prices in Ghana cedis, Africa/Accra time.
 
@@ -33,6 +36,20 @@ Built with Next.js 16 (App Router), React 19, TypeScript (strict), Tailwind CSS 
 - **Promotions**: featured and boosted placement, always labelled. Test mode records promotions as `test`, never as paid.
 - **Store**: product catalogue with discounts and stock, cart, checkout with delivery fees by region (free over a threshold), stock reserved for 45 minutes until payment, order history and timeline, admin fulfilment (packing → shipped → delivered, refunds).
 - **Airtime and data**: network detected from the number (with override for ported numbers), preset or custom airtime amounts, admin-managed data bundle catalogue, automatic delivery after payment, failures flagged for retry or refund.
+
+## Vendor shops
+
+- One shop per seller at `/shop/<name>`, reviewed by an admin before it's public (Admin → Shops; can be switched off in Settings). Admins can verify a business and feature it.
+- Sellers tick "Let buyers order this online" on a listing; the listing quantity becomes stock and is reserved when an order is placed.
+- Orders flow: requested → confirmed → out for delivery / ready for pickup → completed (or declined/cancelled, which returns stock). Buyer and vendor are notified at each step.
+- Payment is between buyer and vendor: pay on delivery, or MoMo to the vendor's number (shown to the buyer only after the vendor confirms). QuestHub records "buyer says paid" and "vendor received payment" but never touches the money. Collecting money for vendors would need a Bank of Ghana licence or a licensed partner (for example split payments); the order model is ready for it.
+
+## Crypto payments
+
+- Off unless `CRYPTO_PAYMENTS=on` with NOWPayments keys, and an admin sets the GH₵/US$ rate (Admin → Settings → crypto exchange rate). In `PAYMENTS_MODE=test` crypto is simulated.
+- Orders stay priced in cedis; the invoice is in US dollars at the admin rate, stored with the payment. Minimum US$1.
+- The IPN endpoint checks the HMAC-SHA512 signature, then fetches the payment from NOWPayments and acts only on that. Only `finished` counts as paid; underpayments are logged on the order for staff to resolve.
+- **Legal:** Ghana's VASP Act 2025 makes crypto legal to trade but not legal tender, and the Bank of Ghana licenses virtual-asset businesses. Confirm with the Bank of Ghana or a lawyer whether accepting crypto requires registration before switching it on.
 
 ## How payments stay safe
 
@@ -86,6 +103,8 @@ Migrations live in `supabase/migrations` and run in order:
 5. `reference_data`: settings, 16 regions, 10 categories with subcategories and fields, promotion plans
 6. `contact_flags` and 7. `admin_users`
 8. `store`: products, cart, orders, order events, top-up bundles, checkout and fulfilment functions, product images bucket
+9. `crypto_accessories`: crypto payment fields and dress-accessory categories
+10. `vendor_shops` and 11. `featured_shop_plan`: shops, buy-online listings, shop cart, vendor orders, shop promotions
 
 After changing the schema, run `npm run db:types` to regenerate `src/lib/supabase/database.types.ts`.
 
@@ -134,6 +153,7 @@ Before taking real money, register the business, confirm Hubtel's merchant requi
 - Refunds are recorded in QuestHub but sent manually from the Hubtel dashboard.
 - Promotion payments still use test-mode activation; store and top-up checkout use Hubtel.
 - Store cart requires sign-in (no guest checkout).
+- The six dress-accessory store products are seeded hidden: add real photos in Admin → Store products and switch them on sale.
 - Email/SMS notifications are in-app only until an email provider is configured.
 - Demo photos are AI-generated.
 - Listing images are served at full size; enable Supabase image transformations (Pro plan) for resized thumbnails.

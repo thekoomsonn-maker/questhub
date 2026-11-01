@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Field, Select } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { cancelPromotion, requestPromotion } from "./actions";
+import { requestShopPromotion } from "../shop/actions";
 
 type Plan = { id: string; name: string; kind: string; duration_days: number; description: string | null; priceLabel: string };
 
@@ -56,5 +57,16 @@ export function CancelPromotionButton({ id }: { id: string }) {
       const r = await cancelPromotion(id);
       if (r.ok) { toast.success(r.message); router.refresh(); } else toast.error(r.error);
     })}>Cancel</Button>
+  );
+}
+
+export function PromoteShopButton({ planId }: { planId: string }) {
+  const router = useRouter();
+  const [pending, start] = useTransition();
+  return (
+    <Button className="mt-3" variant="secondary" pending={pending} onClick={() => start(async () => {
+      const r = await requestShopPromotion(planId);
+      if (r.ok) { toast.success(r.message); router.refresh(); } else toast.error(r.error);
+    })}>Feature my shop</Button>
   );
 }

@@ -9,6 +9,7 @@ import { formatPrice } from "@/lib/format";
 import type { Region } from "@/lib/data/catalog";
 import type { ActionResult } from "@/lib/utils";
 import { placeGoodsOrder } from "./actions";
+import { PaymentMethodPicker, type PaymentMethodOption } from "@/components/store/payment-method";
 
 type Fees = { byRegion: Record<string, number>; fallback: number; freeOver: number };
 
@@ -18,14 +19,16 @@ export function deliveryFee(fees: Fees, regionId: number | null, subtotal: numbe
   return fees.byRegion[String(regionId)] ?? fees.fallback;
 }
 
-export function CheckoutForm({ regions, items, subtotal, fees, defaults, disabled }: {
+export function CheckoutForm({ regions, items, subtotal, fees, defaults, disabled, paymentOptions }: {
   regions: Region[];
   items: { name: string; quantity: number; lineTotal: number }[];
   subtotal: number;
   fees: Fees;
   defaults: { name: string; phone: string; regionId: number | null; city: string };
   disabled: boolean;
+  paymentOptions: PaymentMethodOption;
 }) {
+  const [method, setMethod] = useState<"mobile_money_card" | "crypto">("mobile_money_card");
   const [state, action, pending] = useActionState<ActionResult | null, FormData>(placeGoodsOrder, null);
   const [region, setRegion] = useState<number | null>(defaults.regionId);
   const fee = deliveryFee(fees, region, subtotal);
@@ -70,10 +73,11 @@ export function CheckoutForm({ regions, items, subtotal, fees, defaults, disable
           <div className="flex justify-between"><dt>Delivery</dt><dd className="tabular">{fee === null ? "Choose a region" : fee === 0 ? "Free" : formatPrice(fee)}</dd></div>
           <div className="flex justify-between pt-2 text-base font-semibold"><dt>Total</dt><dd className="font-display tabular">{formatPrice(subtotal + (fee ?? 0))}</dd></div>
         </dl>
+        <div className="mt-4"><PaymentMethodPicker value={method} onChange={setMethod} options={paymentOptions} totalGhs={subtotal + (fee ?? 0)} /></div>
         <Button type="submit" size="lg" className="mt-4 w-full" pending={pending} disabled={disabled}>
           <Lock size={16} aria-hidden /> Pay {formatPrice(subtotal + (fee ?? 0))}
         </Button>
-        <p className="mt-2 text-center text-xs text-ink-faint">You&apos;ll pay securely with Mobile Money or card on the next page. We never see your PIN or card number.</p>
+        <p className="mt-2 text-center text-xs text-ink-faint">You&apos;ll pay on the provider&apos;s secure page next. We never see your PIN, card number or wallet keys.</p>
       </Card>
     </form>
   );

@@ -10,8 +10,8 @@ import { applyVerification } from "@/lib/payments/service";
 export async function simulatePayment(reference: string, outcome: "paid" | "failed") {
   if (paymentsMode() !== "test") throw new Error("Test payments are disabled");
   const viewer = await requireViewer();
-  const { data: payment } = await createServiceClient().from("payments").select("user_id,amount,order_id,provider").eq("reference", reference).single();
+  const { data: payment } = await createServiceClient().from("payments").select("user_id,amount,provider_amount,order_id,provider").eq("reference", reference).single();
   if (!payment || payment.user_id !== viewer.id || payment.provider !== "test") throw new Error("Payment not found");
-  await applyVerification(reference, { status: outcome, amount: Number(payment.amount), providerTransactionId: `TEST-${reference}`, channel: "test", raw: { simulated: outcome } }, `test:${reference}:${outcome}`);
+  await applyVerification(reference, { status: outcome, amount: Number(payment.provider_amount ?? payment.amount), providerTransactionId: `TEST-${reference}`, channel: "test", raw: { simulated: outcome } }, `test:${reference}:${outcome}`);
   redirect(`/orders/${payment.order_id}?return=1`);
 }

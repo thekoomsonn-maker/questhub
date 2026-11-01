@@ -5,7 +5,8 @@ import { env } from "@/lib/env";
 import { formatDate, formatPrice } from "@/lib/format";
 import { Badge, Card, EmptyState, PageHeader } from "@/components/ui/misc";
 import { FormMessage } from "@/components/ui/field";
-import { PromoteForm, CancelPromotionButton } from "./promote-form";
+import { PromoteForm, CancelPromotionButton, PromoteShopButton } from "./promote-form";
+import { getMyShop } from "@/lib/data/shops";
 
 export const metadata: Metadata = { title: "Promotions" };
 
@@ -16,9 +17,14 @@ export default async function PromotionsPage({ searchParams }: PageProps<"/selle
   const sp = await searchParams;
   const supabase = await createClient();
   const [{ data: plans }, { data: listings }, { data: history }] = await Promise.all([
-    supabase.from("promotion_plans").select("id,name,kind,duration_days,price,currency,description").eq("is_active", true).order("sort_order"),
+    supabase.from("promotion_plans").select("id,name,kind,duration_days,price,currency,description").eq("is_active", true).neq("kind", "featured_shop").order("sort_order"),
     supabase.from("listings").select("id,title").eq("seller_id", viewer.id).eq("status", "published").order("published_at", { ascending: false }),
-    supabase.from("promotions").select("id,kind,amount,currency,duration_days,status,payment_status,starts_at,ends_at,created_at,listing:listings(title,slug)").eq("seller_id", viewer.id).order("created_at", { ascending: false }).limit(50),
+    supabase.from("promotions").select("id,kind,amount,currency,duration_days,status,payment_status,starts_at,ends_at,created_at,listing:listings(title,slug),shop:shops(name)").eq("seller_id", viewer.id).order("created_at", { ascending: false }).limit(50),
+  ]);
+
+  const [shop, { data: shopPlan }] = await Promise.all([
+    getMyShop(viewer.id),
+    supabase.from("promotion_plans").select("id,name,duration_days,price,currency,description").eq("kind", "featured_shop").eq("is_active", true).limit(1).maybeSingle(),
   ]);
 
   return (
@@ -37,6 +43,13 @@ export default async function PromotionsPage({ searchParams }: PageProps<"/selle
           ) : (
             <p className="mt-2 text-sm text-ink-soft">You need at least one live listing to promote.</p>
           )}
+          {shopPlan ? (
+            <div className="mt-6 border-t border-line pt-5">
+              <h2 className="font-display text-lg font-semibold">Advertise your shop</h2>
+              <p className="mt-1 text-sm text-ink-soft">{shopPlan.description} {shopPlan.duration_days} days for {formatPrice(shopPlan.price, shopPlan.currency)}.</p>
+              {shop?.status === "active" ? <PromoteShopButton planId={shopPlan.id} /> : <p className="mt-2 text-sm text-ink-faint">Available once your shop is live.</p>}
+            </div>
+          ) : null}
         </Card>
         <div>
           <h2 className="mb-3 font-display text-lg font-semibold">History</h2>
@@ -47,9 +60,9 @@ export default async function PromotionsPage({ searchParams }: PageProps<"/selle
               {history.map((p) => (
                 <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 p-4 text-sm">
                   <div className="min-w-0">
-                    <p className="truncate font-medium">{p.listing?.title ?? "Deleted listing"}</p>
+                    <p className="truncate font-medium">{p.shop ? `Shop: ${p.shop.name}` : p.listing?.title ?? "Deleted listing"}</p>
                     <p className="text-ink-faint">
-                      {p.kind === "featured" ? "Featured" : "Boost"} · {p.duration_days} days · {formatPrice(p.amount, p.currency)}
+                      {p.kind === "featured_shop" ? "Featured shop" : p.kind === "featured" ? "Featured" : "Boost"} · {p.duration_days} days · {formatPrice(p.amount, p.currency)}
                       {p.status === "active" && p.ends_at ? ` · until ${formatDate(p.ends_at)}` : ""}
                     </p>
                   </div>

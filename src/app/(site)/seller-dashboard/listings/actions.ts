@@ -46,6 +46,7 @@ export async function saveListing(listingId: string | null, input: ListingInput)
     quantity: d.quantity,
     region_id: d.regionId,
     city: d.city,
+    ...(d.orderable !== undefined ? { orderable: d.orderable } : {}),
   };
 
   let id = listingId;

@@ -10,6 +10,7 @@ import { FormMessage } from "@/components/ui/field";
 import { PageHeader } from "@/components/ui/misc";
 import { ListingWizard } from "../../listing-wizard";
 import { getWizardData } from "../../../wizard-data";
+import { getMyShop } from "@/lib/data/shops";
 
 export const metadata: Metadata = { title: "Edit listing" };
 
@@ -26,7 +27,7 @@ export default async function EditListingPage({ params }: PageProps<"/seller-das
     .maybeSingle();
   if (!listing) notFound();
 
-  const data = await getWizardData();
+  const [data, shop] = await Promise.all([getWizardData(), getMyShop(viewer.id)]);
   const cat = data.categories.flatMap((c) => [c, ...c.children]).find((c) => c.id === listing.category_id);
   const defs = data.attributes.filter((a) => a.category_id === listing.category_id || a.category_id === cat?.parent_id) as AttributeDef[];
 
@@ -45,6 +46,7 @@ export default async function EditListingPage({ params }: PageProps<"/seller-das
       <ListingWizard
         userId={viewer.id}
         {...data}
+        shopActive={shop?.status === "active"}
         initial={{
           id: listing.id,
           slug: listing.slug,
@@ -61,6 +63,7 @@ export default async function EditListingPage({ params }: PageProps<"/seller-das
             regionId: listing.region_id ?? ("" as unknown as number),
             city: listing.city ?? "",
             attributes: attributeRowsToInput(defs, listing.values),
+            orderable: listing.orderable,
           },
           images: [...listing.images]
             .sort((a, b) => a.sort_order - b.sort_order)

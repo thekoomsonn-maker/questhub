@@ -5,6 +5,7 @@ import { getCart } from "@/lib/data/store";
 import { getRegions } from "@/lib/data/catalog";
 import { createClient } from "@/lib/supabase/server";
 import { paymentsMode } from "@/lib/payments/config";
+import { paymentOptions } from "@/lib/payments/options";
 import { FormMessage } from "@/components/ui/field";
 import { PageHeader } from "@/components/ui/misc";
 import { CheckoutForm } from "./checkout-form";
@@ -23,6 +24,7 @@ export default async function CheckoutPage() {
   ]);
   const s = Object.fromEntries((settings ?? []).map((r) => [r.key, r.value]));
   const mode = paymentsMode();
+  const options = await paymentOptions();
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
@@ -36,6 +38,7 @@ export default async function CheckoutPage() {
         fees={{ byRegion: (s.delivery_fees ?? {}) as Record<string, number>, fallback: Number(s.delivery_fee_default ?? 35), freeOver: Number(s.free_delivery_over ?? 0) }}
         defaults={{ name: viewer.profile.display_name, phone: contacts?.phone ?? "", regionId: viewer.profile.region_id, city: viewer.profile.city ?? "" }}
         disabled={mode === "off"}
+        paymentOptions={options}
       />
     </div>
   );

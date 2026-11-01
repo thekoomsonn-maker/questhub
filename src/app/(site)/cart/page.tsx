@@ -9,11 +9,12 @@ import { ButtonLink } from "@/components/ui/button";
 import { Card, EmptyState, PageHeader } from "@/components/ui/misc";
 import { FormMessage } from "@/components/ui/field";
 import { CartLineControls } from "./cart-line";
+import { ShopCartSection } from "./shop-cart";
 
 export const metadata: Metadata = { title: "Your cart" };
 
 export default async function CartPage() {
-  await requireViewer("/cart");
+  const viewer = await requireViewer("/cart");
   const cart = await getCart();
   const problems = cart.items.filter((i) => !i.product.is_active || i.product.stock < i.quantity);
 
@@ -21,7 +22,7 @@ export default async function CartPage() {
     <div className="mx-auto max-w-4xl px-4 py-8">
       <PageHeader title="Your cart" />
       {cart.items.length === 0 ? (
-        <EmptyState icon={<ShoppingCart size={32} />} title="Your cart is empty" body="Browse phones, accessories and appliances in the QuestHub Store." action={<ButtonLink href="/store">Go to the store</ButtonLink>} />
+        <EmptyState icon={<ShoppingCart size={32} />} title="Nothing from the QuestHub Store yet" body="Browse phones, accessories and appliances in the store, or order from a shop." action={<ButtonLink href="/store">Go to the store</ButtonLink>} />
       ) : (
         <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
           <div className="flex flex-col gap-3">
@@ -57,6 +58,7 @@ export default async function CartPage() {
           </Card>
         </div>
       )}
+      <ShopCartSection userId={viewer.id} />
     </div>
   );
 }
