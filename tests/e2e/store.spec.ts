@@ -60,8 +60,9 @@ test("10. a forged payment callback cannot mark an order as paid", async ({ page
   await expect(page.getByRole("heading", { name: "Test payment" })).toBeVisible();
   const reference = decodeURIComponent(page.url().split("/").pop()!);
 
-  const res = await request.post("/api/payments/hubtel/callback", {
-    data: { ResponseCode: "0000", Status: "Success", Data: { ClientReference: reference, Status: "Success", Amount: 10 } },
+  const res = await request.post("/api/payments/paystack/webhook", {
+    headers: { "x-paystack-signature": "0".repeat(128) },
+    data: { event: "charge.success", data: { reference, status: "success", amount: 1000, currency: "GHS" } },
   });
   expect(res.status()).not.toBe(200);
   const { data: payment } = await service.from("payments").select("status,order:orders(payment_status,status)").eq("reference", reference).single();

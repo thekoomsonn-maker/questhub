@@ -4,7 +4,7 @@ import { createServiceClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 import { log } from "@/lib/log";
 import { cryptoMode, hubtel, paymentsMode } from "./config";
-import { hubtelCheckout, hubtelTopup, nowpaymentsApi, testTopup, type CryptoPayment, type Verification } from "./providers";
+import { paystackCheckout, hubtelTopup, nowpaymentsApi, testTopup, type CryptoPayment, type Verification } from "./providers";
 
 export type PaymentMethod = "mobile_money_card" | "crypto";
 
@@ -15,7 +15,7 @@ export type PaymentMethod = "mobile_money_card" | "crypto";
  */
 
 function newReference(orderNumber: string) {
-  // Hubtel allows up to 32 characters
+  // Short, unique and URL-safe (Paystack accepts letters, digits, - . =)
   return `${orderNumber}-${randomBytes(5).toString("hex")}`.slice(0, 32);
 }
 
@@ -46,7 +46,7 @@ export async function startCheckout(orderId: string, userId: string, email?: str
   }
   const { error } = await db.from("payments").insert({
     user_id: userId, purpose: "order", order_id: order.id, method,
-    provider: mode !== "live" ? "test" : method === "crypto" ? "nowpayments" : "hubtel",
+    provider: mode !== "live" ? "test" : method === "crypto" ? "nowpayments" : "paystack",
     reference, amount: order.total, currency: order.currency, status: "pending",
     provider_amount: usd?.amount ?? null, provider_currency: usd ? "USD" : null, fx_rate: usd?.rate ?? null,
   });
@@ -68,14 +68,13 @@ export async function startCheckout(orderId: string, userId: string, email?: str
     await db.from("payments").update({ checkout_id: session.checkoutId }).eq("reference", reference);
     return { url: session.checkoutUrl };
   }
-  const token = hubtel().callbackToken;
-  const session = await hubtelCheckout.create({
+  const session = await paystackCheckout.create({
     reference,
     amount: Number(order.total),
     description: order.kind === "topup" ? `${order.topup_type} for ${order.topup_recipient}` : `QuestHub order ${order.order_number}`,
     returnUrl: `${base}/orders/${order.id}?return=1`,
     cancelUrl: `${base}/orders/${order.id}?cancelled=1`,
-    callbackUrl: `${base}/api/payments/hubtel/callback${token ? `?token=${encodeURIComponent(token)}` : ""}`,
+    callbackUrl: `${base}/api/payments/paystack/webhook`,
     customer: { name: order.delivery_name ?? undefined, phone: order.delivery_phone ?? undefined, email },
   });
   await db.from("payments").update({ checkout_id: session.checkoutId }).eq("reference", reference);
@@ -142,10 +141,10 @@ export async function refreshOrderPayment(orderId: string) {
     }
   }
   const { data: payment } = await db.from("payments").select("reference,status,provider")
-    .eq("order_id", orderId).eq("provider", "hubtel").eq("status", "pending").order("created_at", { ascending: false }).limit(1).maybeSingle();
+    .eq("order_id", orderId).eq("provider", "paystack").eq("status", "pending").order("created_at", { ascending: false }).limit(1).maybeSingle();
   if (!payment) return;
   try {
-    const v = await hubtelCheckout.verify(payment.reference);
+    const v = await paystackCheckout.verify(payment.reference);
     if (v.status !== "pending") await applyVerification(payment.reference, v, `status-check:${payment.reference}:${v.status}`);
   } catch (e) {
     log.warn("payment.refresh_failed", { orderId, error: e instanceof Error ? e.message : "unknown" });

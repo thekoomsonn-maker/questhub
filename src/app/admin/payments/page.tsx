@@ -15,7 +15,7 @@ export default async function AdminPayments() {
   return (
     <>
       <AdminHeader title="Payments" description="Records are written only by the server after the payment provider confirms them. They can't be edited here." />
-      {!env.checkoutEnabled ? <div className="mb-4"><FormMessage tone="info">Online checkout is off. Set PAYMENTS_MODE and the Hubtel keys (see README) to start taking payments.</FormMessage></div> : null}
+      {!env.checkoutEnabled ? <div className="mb-4"><FormMessage tone="info">Online checkout is off. Set PAYMENTS_MODE=live and PAYSTACK_SECRET_KEY (see README) to start taking payments.</FormMessage></div> : null}
       <Table head={["Reference", "Customer", "For", "Amount", "Status", "Date"]} empty={!data?.length}>
         {data?.map((p) => (
           <tr key={p.id}>

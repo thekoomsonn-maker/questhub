@@ -4,29 +4,49 @@ import "server-only";
  * Payment configuration. PAYMENTS_MODE:
  *  - "off":  checkout disabled (default in production until configured)
  *  - "test": simulated payments, recorded as `test`, no money moves
- *  - "live": Hubtel. Requires the HUBTEL_* variables below.
+ *  - "live": Paystack (Mobile Money and cards). Requires PAYSTACK_SECRET_KEY.
+ *
+ * Airtime/data delivery is a separate service (Paystack collects the money,
+ * a top-up API sends the credit). Hubtel commission services are supported
+ * for delivery; without them, top-ups stay hidden in live mode.
  */
 export type PaymentsMode = "off" | "test" | "live";
 
 export function paymentsMode(): PaymentsMode {
   const m = process.env.PAYMENTS_MODE;
-  if (m === "live") return hubtelConfigured() ? "live" : "off";
+  if (m === "live") return paystackConfigured() ? "live" : "off";
   if (m === "test") return "test";
   return "off";
 }
 
-export function hubtelConfigured() {
-  return Boolean(process.env.HUBTEL_CLIENT_ID && process.env.HUBTEL_CLIENT_SECRET && process.env.HUBTEL_MERCHANT_ACCOUNT);
+export function paystackConfigured() {
+  return Boolean(process.env.PAYSTACK_SECRET_KEY);
+}
+
+export function paystack() {
+  return {
+    secretKey: process.env.PAYSTACK_SECRET_KEY ?? "",
+    baseUrl: process.env.PAYSTACK_API_URL ?? "https://api.paystack.co",
+    currency: process.env.PAYSTACK_CURRENCY ?? "GHS",
+  };
+}
+
+/** Airtime/data delivery credentials (Hubtel commission services). */
+export function topupDeliveryConfigured() {
+  return Boolean(process.env.HUBTEL_CLIENT_ID && process.env.HUBTEL_CLIENT_SECRET && process.env.HUBTEL_PREPAID_DEPOSIT_ID);
+}
+
+/** Top-ups are sold in test mode, or live when a delivery service is set up. */
+export function topupsMode(): PaymentsMode {
+  const mode = paymentsMode();
+  if (mode === "live" && !topupDeliveryConfigured()) return "off";
+  return mode;
 }
 
 export function hubtel() {
   return {
     clientId: process.env.HUBTEL_CLIENT_ID ?? "",
     clientSecret: process.env.HUBTEL_CLIENT_SECRET ?? "",
-    merchantAccount: process.env.HUBTEL_MERCHANT_ACCOUNT ?? "",
-    checkoutUrl: process.env.HUBTEL_CHECKOUT_URL ?? "https://payproxyapi.hubtel.com/items/initiate",
-    // Confirm the status endpoint for your account in the Hubtel dashboard; it usually requires IP allow-listing.
-    statusUrl: process.env.HUBTEL_STATUS_URL ?? "https://api-txnstatus.hubtel.com/transactions/{merchant}/status",
     callbackToken: process.env.HUBTEL_CALLBACK_TOKEN ?? "",
     // Airtime/data (Hubtel commission services). IDs come from your Hubtel dashboard.
     prepaidDepositId: process.env.HUBTEL_PREPAID_DEPOSIT_ID ?? "",

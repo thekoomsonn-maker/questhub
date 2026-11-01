@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 export type PaymentMethodOption = { crypto: null | { usdRate: number } };
 
-/** Mobile Money / card via Hubtel, or crypto via NOWPayments (when enabled). */
+/** Mobile Money / card via Paystack, or crypto via NOWPayments (when enabled). */
 export function PaymentMethodPicker({ value, onChange, options, totalGhs }: {
   value: "mobile_money_card" | "crypto";
   onChange: (v: "mobile_money_card" | "crypto") => void;

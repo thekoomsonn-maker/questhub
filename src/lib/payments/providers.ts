@@ -1,6 +1,6 @@
 import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { basicAuth, hubtel, nowpayments } from "./config";
+import { basicAuth, hubtel, nowpayments, paystack } from "./config";
 import { log } from "@/lib/log";
 
 export type CheckoutRequest = {
@@ -33,51 +33,64 @@ async function fetchJson(url: string, init: RequestInit, timeoutMs = 20_000) {
   return { ok: res.ok, status: res.status, body: body as Record<string, unknown> | null };
 }
 
-/** Hubtel Online Checkout (redirect). */
-export const hubtelCheckout = {
+/** Paystack hosted checkout (Mobile Money and cards). Amounts are sent in pesewas. */
+export const paystackCheckout = {
   async create(req: CheckoutRequest): Promise<CheckoutSession> {
-    const h = hubtel();
-    const r = await fetchJson(h.checkoutUrl, {
+    const p = paystack();
+    if (!req.customer.email) throw new Error("Add an email address to your account to pay online.");
+    const r = await fetchJson(`${p.baseUrl}/transaction/initialize`, {
       method: "POST",
-      headers: { Authorization: basicAuth(), "Content-Type": "application/json", Accept: "application/json", "Cache-Control": "no-cache" },
+      headers: { Authorization: `Bearer ${p.secretKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        totalAmount: req.amount,
-        description: req.description.slice(0, 100),
-        callbackUrl: req.callbackUrl,
-        returnUrl: req.returnUrl,
-        cancellationUrl: req.cancelUrl,
-        merchantAccountNumber: h.merchantAccount,
-        clientReference: req.reference,
-        payeeName: req.customer.name,
-        payeeMobileNumber: req.customer.phone,
-        payeeEmail: req.customer.email,
+        email: req.customer.email,
+        amount: Math.round(req.amount * 100),
+        currency: p.currency,
+        reference: req.reference,
+        callback_url: req.returnUrl,
+        channels: ["mobile_money", "card", "bank_transfer"],
+        metadata: {
+          cancel_action: req.cancelUrl,
+          description: req.description.slice(0, 100),
+          custom_fields: [{ display_name: "Order", variable_name: "order", value: req.description.slice(0, 100) }],
+        },
       }),
     });
     const data = (r.body?.data ?? {}) as Record<string, string>;
-    if (!r.ok || r.body?.responseCode !== "0000" || !data.checkoutUrl) {
-      log.error("hubtel.checkout_failed", { httpStatus: r.status, responseCode: r.body?.responseCode });
+    if (!r.ok || r.body?.status !== true || !data.authorization_url) {
+      log.error("paystack.initialize_failed", { httpStatus: r.status, message: String(r.body?.message ?? "").slice(0, 120) });
       throw new Error("The payment page couldn't be opened. Try again in a moment.");
     }
-    return { checkoutUrl: data.checkoutUrl, checkoutId: data.checkoutId ?? null };
+    return { checkoutUrl: data.authorization_url, checkoutId: data.access_code ?? null };
   },
 
-  /** Server-side status check. Callbacks are not signed, so this is the source of truth. */
+  /** Server-side status check: the only thing that can mark a payment paid. */
   async verify(reference: string): Promise<Verification> {
-    const h = hubtel();
-    const url = `${h.statusUrl.replace("{merchant}", encodeURIComponent(h.merchantAccount))}?clientReference=${encodeURIComponent(reference)}`;
-    const r = await fetchJson(url, { headers: { Authorization: basicAuth(), Accept: "application/json" } });
+    const p = paystack();
+    const r = await fetchJson(`${p.baseUrl}/transaction/verify/${encodeURIComponent(reference)}`, {
+      headers: { Authorization: `Bearer ${p.secretKey}`, Accept: "application/json" },
+    });
     const data = (r.body?.data ?? {}) as Record<string, unknown>;
+    if (!r.ok) log.warn("paystack.verify_failed", { httpStatus: r.status });
     const s = String(data.status ?? "").toLowerCase();
-    if (!r.ok) log.warn("hubtel.status_check_failed", { httpStatus: r.status, responseCode: r.body?.responseCode });
+    const currencyOk = String(data.currency ?? p.currency).toUpperCase() === p.currency.toUpperCase();
     return {
-      status: s === "paid" || s === "success" ? "paid" : s === "unpaid" || s === "failed" || s === "cancelled" ? "failed" : "pending",
-      amount: typeof data.amount === "number" ? data.amount : data.amount ? Number(data.amount) : null,
-      providerTransactionId: (data.transactionId ?? data.externalTransactionId ?? null) as string | null,
-      channel: (data.paymentMethod ?? data.channel ?? null) as string | null,
+      status: s === "success" && currencyOk ? "paid" : s === "failed" || s === "abandoned" || s === "reversed" || (s === "success" && !currencyOk) ? "failed" : "pending",
+      amount: typeof data.amount === "number" ? data.amount / 100 : null,
+      providerTransactionId: data.id != null ? String(data.id) : null,
+      channel: (data.channel as string) ?? null,
       raw: r.body,
     };
   },
 };
+
+/** Paystack signs webhooks with HMAC-SHA512 of the raw body using the secret key. */
+export function verifyPaystackSignature(rawBody: string, signature: string | null, secret: string): boolean {
+  if (!signature || !secret) return false;
+  const expected = createHmac("sha512", secret).update(rawBody).digest("hex");
+  const a = Buffer.from(expected);
+  const b = Buffer.from(signature.toLowerCase());
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 
 export type TopupRequest = {
   network: "mtn" | "telecel" | "airteltigo";

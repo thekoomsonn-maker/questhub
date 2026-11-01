@@ -3,11 +3,11 @@
 A marketplace and online store for Ghana, with three ways to earn:
 
 1. **Marketplace (classifieds):** people and businesses post ads, buyers message sellers, moderators keep it clean. Revenue from paid promotions.
-2. **QuestHub Store:** products you sell directly. Cart, delivery details, payment by Mobile Money or card (Hubtel), order tracking and fulfilment.
-3. **Airtime and data:** MTN, Telecel and AirtelTigo top-ups through Hubtel, sold at your margin.
+2. **QuestHub Store:** products you sell directly. Cart, delivery details, payment by Mobile Money or card (Paystack), order tracking and fulfilment.
+3. **Airtime and data:** MTN, Telecel and AirtelTigo top-ups, paid through Paystack and delivered through a top-up API (Hubtel commission services), sold at your margin.
 4. **Vendor shops:** businesses open a storefront (logo, banner, hours, delivery info), list products, and take online orders. Buyers pay the vendor directly (on delivery or by MoMo to the vendor), so QuestHub never holds vendor money. Revenue from featured-shop ads and listing boosts.
 
-Customers can pay for store orders and top-ups with Mobile Money/card (Hubtel) or crypto (NOWPayments, off by default).
+Customers can pay for store orders and top-ups with Mobile Money/card (Paystack) or crypto (NOWPayments, off by default).
 
 Prices in Ghana cedis, Africa/Accra time.
 
@@ -54,10 +54,10 @@ Built with Next.js 16 (App Router), React 19, TypeScript (strict), Tailwind CSS 
 ## How payments stay safe
 
 - Order totals are computed in the database from server-side prices; the browser never sends a price.
-- Hubtel callbacks are not signed, so a callback only tells the server *which* payment to check. The server then asks Hubtel for the status and confirms the amount before calling `confirm_order_payment`, which only the service role can run.
+- Paystack webhooks are checked against the `x-paystack-signature` HMAC, and even then they only tell the server *which* payment to check. The server calls Paystack's verify endpoint, confirms the amount (pesewas) and currency, then calls `confirm_order_payment`, which only the service role can run. The order page also re-verifies when the customer returns.
 - Confirmation is idempotent: duplicate callbacks are recorded once in `payment_events` and change nothing.
 - Top-ups are sent only after a verified payment. A timed-out request is treated as "pending", not failed, to avoid double top-ups; staff retry only after checking the Hubtel dashboard.
-- No card numbers or Mobile Money PINs ever touch QuestHub; customers pay on Hubtel's page.
+- No card numbers or Mobile Money PINs ever touch QuestHub; customers pay on Paystack's page.
 
 ## Security model
 
@@ -127,16 +127,15 @@ npm run test:e2e            # browser journeys (needs local Supabase + seed)
 5. Set `CRON_SECRET` and call `GET /api/cron` every 15 minutes with `Authorization: Bearer <CRON_SECRET>` (Vercel Cron does this automatically). It expires old listings, ended promotions and unpaid orders (returning their stock).
 6. Make your first admin with the SQL above.
 
-## Going live with Hubtel
+## Going live with Paystack
 
-1. In the Hubtel dashboard, get your API client ID and secret, merchant account (POS sales) number, and for top-ups your prepaid deposit ID and the service IDs for each network's airtime and data. Put them in the environment variables listed in `.env.example`.
-2. Ask Hubtel to allow-list your server's IP for the transaction status API, and confirm the status and top-up endpoint URLs for your account. Override `HUBTEL_STATUS_URL` / `HUBTEL_TOPUP_URL` if theirs differ.
-3. Set a long random `HUBTEL_CALLBACK_TOKEN`.
-4. In Admin → Data bundles, replace the sample bundles with your real ones, using Hubtel's exact bundle codes and your selling prices.
-5. Set `PAYMENTS_MODE=live` and make one small real purchase of each type (store item, airtime, data) before announcing.
-6. Fund your Hubtel prepaid balance for top-ups and check it regularly; failed top-ups show under Admin → Store orders → Needs attention.
+1. Create a Paystack Ghana business account and complete compliance (business documents, settlement bank or MoMo wallet).
+2. Copy the **test** secret key (`sk_test_…`) into `PAYSTACK_SECRET_KEY` and set `PAYMENTS_MODE=live`. Paystack's test mode gives you test cards and test MoMo numbers, so you can run a full checkout without real money.
+3. In Paystack → Settings → API Keys & Webhooks, set the webhook URL to `https://<your-domain>/api/payments/paystack/webhook`.
+4. When test purchases work, swap in the **live** secret key (`sk_live_…`) and redeploy. Make one small real purchase before announcing.
+5. Airtime and data: Paystack only collects the money. To deliver credit, set the Hubtel commission-services variables in `.env.example` (client ID/secret, prepaid deposit ID, service IDs per network) and fund that prepaid balance. In Admin → Data bundles, use the provider's exact bundle codes. Until those are set, the Airtime page shows as switched off in live mode.
 
-Before taking real money, register the business, confirm Hubtel's merchant requirements, and have a lawyer review the terms and privacy pages (they're templates).
+Before taking real money, register the business, complete Paystack's business verification, and have a lawyer review the terms and privacy pages (they're templates).
 
 **Backups**: enable Supabase point-in-time recovery on paid plans, or schedule `supabase db dump`. Storage files are not included in database backups; back up the `listing-images` and `avatars` buckets separately.
 
@@ -149,9 +148,9 @@ Before taking real money, register the business, confirm Hubtel's merchant requi
 
 ## Known limitations
 
-- Hubtel's public documentation doesn't publish the status-check and top-up response formats in full. The integration follows their documented checkout API and common response codes; verify it with one real transaction of each type before launch (see "Going live").
-- Refunds are recorded in QuestHub but sent manually from the Hubtel dashboard.
-- Promotion payments still use test-mode activation; store and top-up checkout use Hubtel.
+- The airtime/data delivery integration (Hubtel commission services) follows their common response codes; verify it with one real top-up of each type before launch.
+- Refunds are recorded in QuestHub but sent manually from the Paystack dashboard.
+- Promotion payments still use test-mode activation; store and top-up checkout use Paystack.
 - Store cart requires sign-in (no guest checkout).
 - The six dress-accessory store products are seeded hidden: add real photos in Admin → Store products and switch them on sale.
 - Email/SMS notifications are in-app only until an email provider is configured.

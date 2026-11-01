@@ -28,9 +28,9 @@ export const env = {
   get siteUrl() {
     return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   },
-  /** True when customers can pay online (live Hubtel or test mode). */
+  /** True when customers can pay online (live Paystack or test mode). */
   get checkoutEnabled() {
     const m = process.env.PAYMENTS_MODE;
-    return m === "test" || (m === "live" && Boolean(process.env.HUBTEL_CLIENT_ID && process.env.HUBTEL_CLIENT_SECRET && process.env.HUBTEL_MERCHANT_ACCOUNT));
+    return m === "test" || (m === "live" && Boolean(process.env.PAYSTACK_SECRET_KEY));
   },
 };

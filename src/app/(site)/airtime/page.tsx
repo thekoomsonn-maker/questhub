@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getViewer } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { paymentsMode } from "@/lib/payments/config";
+import { topupsMode } from "@/lib/payments/config";
 import { paymentOptions } from "@/lib/payments/options";
 import { FormMessage } from "@/components/ui/field";
 import { TopupForm } from "./topup-form";
@@ -17,7 +17,7 @@ export default async function AirtimePage() {
     getViewer().then(async (v) => (v ? (await supabase.from("profile_contacts").select("phone").eq("user_id", v.id).maybeSingle()).data : null)),
   ]);
   const l = Object.fromEntries((limits ?? []).map((r) => [r.key, Number(r.value)]));
-  const mode = paymentsMode();
+  const mode = topupsMode();
   const options = await paymentOptions();
 
   return (

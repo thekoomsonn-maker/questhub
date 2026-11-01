@@ -5,7 +5,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getViewer } from "@/lib/auth";
 import { startCheckout } from "@/lib/payments/service";
-import { paymentsMode } from "@/lib/payments/config";
+import { topupsMode } from "@/lib/payments/config";
 import { normaliseGhanaNumber } from "@/lib/networks";
 import { friendlyError, type ActionResult } from "@/lib/utils";
 
@@ -17,7 +17,7 @@ const schema = z.discriminatedUnion("type", [
 export async function buyTopup(_: ActionResult | null, form: FormData): Promise<ActionResult> {
   const viewer = await getViewer();
   if (!viewer) redirect("/login?next=/airtime");
-  if (paymentsMode() === "off") return { ok: false, error: "Airtime and data aren't available yet. Please check back soon." };
+  if (topupsMode() === "off") return { ok: false, error: "Airtime and data aren't available yet. Please check back soon." };
   const parsed = schema.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Check the form." };
   const recipient = normaliseGhanaNumber(parsed.data.recipient);
