@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Bell, ChevronRight, Heart, LayoutDashboard, MessageCircle, Settings, ShieldCheck, Store } from "lucide-react";
+import { Bell, ChevronRight, Heart, LayoutDashboard, MessageCircle, Package, Settings, ShieldCheck, Store } from "lucide-react";
 import { requireViewer } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
 import { Badge, Card } from "@/components/ui/misc";
@@ -21,6 +21,7 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
 
   const links = [
     { href: "/account/profile", label: "Edit profile and contact settings", icon: Settings },
+    { href: "/orders", label: "Orders and top-ups", icon: Package },
     { href: "/favorites", label: "Saved items", icon: Heart },
     { href: "/messages", label: "Messages", icon: MessageCircle },
     { href: "/notifications", label: "Notifications", icon: Bell },

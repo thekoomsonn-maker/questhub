@@ -1,5 +1,5 @@
 /** Public URL for an object in a public storage bucket. */
-export function storageUrl(bucket: "listing-images" | "avatars", path: string | null | undefined) {
+export function storageUrl(bucket: "listing-images" | "avatars" | "product-images", path: string | null | undefined) {
   if (!path) return null;
   const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const encoded = path.split("/").map(encodeURIComponent).join("/");
@@ -8,3 +8,4 @@ export function storageUrl(bucket: "listing-images" | "avatars", path: string | 
 
 export const listingImageUrl = (path: string | null | undefined) => storageUrl("listing-images", path);
 export const avatarUrl = (path: string | null | undefined) => storageUrl("avatars", path);
+export const productImageUrl = (path: string | null | undefined) => storageUrl("product-images", path);

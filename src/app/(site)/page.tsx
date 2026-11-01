@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { Eye, HandCoins, MessageCircle, Users } from "lucide-react";
+import { Eye, HandCoins, MessageCircle, Smartphone, Users } from "lucide-react";
 import { getCategoryTree } from "@/lib/data/catalog";
 import { getFeaturedListings, searchListings } from "@/lib/data/listings";
 import { getFavoriteIds } from "@/lib/data/viewer";
+import { getProducts } from "@/lib/data/store";
+import { ProductCard } from "@/components/store/product-card";
 import { getViewer } from "@/lib/auth";
 import { SearchBar } from "@/components/layout/search-bar";
 import { ListingCard, ListingGrid } from "@/components/listings/listing-card";
@@ -69,6 +71,10 @@ export default async function HomePage() {
           </ul>
         </section>
 
+        <Suspense fallback={null}>
+          <StoreRow />
+        </Suspense>
+
         <Suspense fallback={<GridSkeleton title="Featured" />}>
           <Featured />
         </Suspense>
@@ -97,6 +103,37 @@ export default async function HomePage() {
         </section>
       </div>
     </>
+  );
+}
+
+async function StoreRow() {
+  const [{ items }, viewer] = await Promise.all([getProducts({ pageSize: 5 }), getViewer()]);
+  return (
+    <section className="py-6" aria-labelledby="store">
+      <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
+        <div>
+          <div className="mb-4 flex items-baseline justify-between">
+            <h2 id="store" className="font-display text-xl font-semibold">From the QuestHub Store <span className="ml-1 text-xs font-normal text-ink-faint">Sold and delivered by us</span></h2>
+            <Link href="/store" className="text-sm font-medium text-brand hover:underline">Shop all</Link>
+          </div>
+          {items.length ? (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
+              {items.map((p) => <ProductCard key={p.id} product={p} signedIn={Boolean(viewer)} />)}
+            </div>
+          ) : (
+            <p className="text-sm text-ink-soft">New stock is on the way.</p>
+          )}
+        </div>
+        <Link href="/airtime" className="flex flex-col justify-between gap-4 rounded-[var(--radius-card)] bg-gold p-5 text-ink hover:brightness-[1.03]">
+          <Smartphone size={28} aria-hidden />
+          <div>
+            <h2 className="font-display text-2xl font-semibold leading-tight">Airtime & data in seconds</h2>
+            <p className="mt-1 text-sm">MTN, Telecel and AirtelTigo. Pay with Mobile Money.</p>
+          </div>
+          <span className="inline-flex h-10 w-fit items-center rounded-full bg-ink px-4 text-sm font-medium text-white">Top up now</span>
+        </Link>
+      </div>
+    </section>
   );
 }
 

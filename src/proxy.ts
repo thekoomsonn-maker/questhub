@@ -14,6 +14,9 @@ const PRIVATE_PREFIXES = [
   "/sell",
   "/seller-dashboard",
   "/admin",
+  "/cart",
+  "/checkout",
+  "/orders",
 ];
 
 export async function proxy(request: NextRequest) {

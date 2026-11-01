@@ -2,11 +2,20 @@
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
-import { listingImageUrl } from "@/lib/images";
+import { storageUrl } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
-export function ImageGallery({ images, title }: { images: { id: string; storage_path: string }[]; title: string }) {
+export function ImageGallery({
+  images,
+  title,
+  bucket = "listing-images",
+}: {
+  images: { id: string; storage_path: string }[];
+  title: string;
+  bucket?: "listing-images" | "product-images";
+}) {
   const [index, setIndex] = useState(0);
+  const url = (p: string) => storageUrl(bucket, p)!;
   if (images.length === 0) {
     return (
       <div className="flex aspect-[4/3] items-center justify-center rounded-[var(--radius-card)] border border-line bg-surface text-ink-faint">
@@ -31,7 +40,7 @@ export function ImageGallery({ images, title }: { images: { id: string; storage_
       <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] border border-line bg-ink">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={listingImageUrl(images[index].storage_path)!}
+          src={url(images[index].storage_path)}
           alt={`${title}, photo ${index + 1} of ${images.length}`}
           className="h-full w-full object-contain"
         />
@@ -60,7 +69,7 @@ export function ImageGallery({ images, title }: { images: { id: string; storage_
                 className={cn("h-16 w-20 overflow-hidden rounded-[8px] border-2", i === index ? "border-brand" : "border-transparent opacity-70 hover:opacity-100")}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={listingImageUrl(img.storage_path)!} alt="" loading="lazy" className="h-full w-full object-cover" />
+                <img src={url(img.storage_path)} alt="" loading="lazy" className="h-full w-full object-cover" />
               </button>
             </li>
           ))}

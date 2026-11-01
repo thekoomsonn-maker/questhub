@@ -9,6 +9,8 @@ const groups = [
       { href: "/categories", label: "All categories" },
       { href: "/search", label: "Browse listings" },
       { href: "/sell", label: "Post an ad" },
+      { href: "/store", label: "QuestHub Store" },
+      { href: "/airtime", label: "Airtime & data" },
     ],
   },
   {
@@ -17,6 +19,7 @@ const groups = [
       { href: "/account", label: "Account" },
       { href: "/seller-dashboard", label: "Seller dashboard" },
       { href: "/favorites", label: "Saved items" },
+      { href: "/orders", label: "Orders" },
     ],
   },
   {

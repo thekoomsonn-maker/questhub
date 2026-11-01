@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { Bell, Heart, MessageCircle, Plus, Shield, User } from "lucide-react";
+import { Bell, Heart, MessageCircle, Plus, Shield, ShoppingCart, User } from "lucide-react";
 import { getViewer } from "@/lib/auth";
 import { getViewerCounts } from "@/lib/data/viewer";
+import { getCart } from "@/lib/data/store";
 import { getRegions } from "@/lib/data/catalog";
 import { site } from "@/config/site";
 import { ButtonLink } from "@/components/ui/button";
@@ -34,7 +35,7 @@ function IconLink({ href, label, count, children }: { href: string; label: strin
 }
 
 export async function SiteHeader() {
-  const [viewer, counts, regions] = await Promise.all([getViewer(), getViewerCounts(), getRegions()]);
+  const [viewer, counts, regions, cart] = await Promise.all([getViewer(), getViewerCounts(), getRegions(), getCart()]);
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur">
@@ -53,6 +54,11 @@ export async function SiteHeader() {
           </Suspense>
         </div>
         <nav className="ml-auto flex items-center gap-1 md:ml-0" aria-label="Account">
+          <Link href="/store" className="px-2 text-sm font-medium text-ink-soft hover:text-brand">Store</Link>
+          <Link href="/airtime" className="hidden px-2 text-sm font-medium text-ink-soft hover:text-brand lg:inline">Airtime</Link>
+          <IconLink href="/cart" label="Cart" count={cart.count}>
+            <ShoppingCart size={20} />
+          </IconLink>
           {viewer ? (
             <>
               {viewer.profile.role === "admin" ? (

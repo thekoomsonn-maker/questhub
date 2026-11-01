@@ -43,6 +43,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"cart_items": {
+                  Row: {
+                    "added_at": string,"product_id": string,"quantity": number,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "added_at"?: string,"product_id": string,"quantity": number,"user_id": string
+                  }
+                  Update: {
+                    "added_at"?: string,"product_id"?: string,"quantity"?: number,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "cart_items_product_id_fkey"
+      columns: ["product_id"]
+isOneToOne: false
+      referencedRelation: "store_products"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "cart_items_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"categories": {
                   Row: {
                     "created_at": string,"description": string | null,"icon": string | null,"id": string,"is_active": boolean,"name": string,"parent_id": string | null,"slug": string,"sort_order": number,"updated_at": string
@@ -291,6 +317,90 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"order_events": {
+                  Row: {
+                    "actor_id": string | null,"created_at": string,"id": number,"note": string | null,"order_id": string,"status": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "actor_id"?: string | null,"created_at"?: string,"id"?: never,"note"?: string | null,"order_id": string,"status": string
+                  }
+                  Update: {
+                    "actor_id"?: string | null,"created_at"?: string,"id"?: never,"note"?: string | null,"order_id"?: string,"status"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "order_events_actor_id_fkey"
+      columns: ["actor_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "order_events_order_id_fkey"
+      columns: ["order_id"]
+isOneToOne: false
+      referencedRelation: "orders"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"order_items": {
+                  Row: {
+                    "id": string,"line_total": number | null,"order_id": string,"product_id": string | null,"product_name": string,"quantity": number,"unit_price": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: string,"line_total"?: never,"order_id": string,"product_id"?: string | null,"product_name": string,"quantity": number,"unit_price": number
+                  }
+                  Update: {
+                    "id"?: string,"line_total"?: never,"order_id"?: string,"product_id"?: string | null,"product_name"?: string,"quantity"?: number,"unit_price"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "order_items_order_id_fkey"
+      columns: ["order_id"]
+isOneToOne: false
+      referencedRelation: "orders"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "order_items_product_id_fkey"
+      columns: ["product_id"]
+isOneToOne: false
+      referencedRelation: "store_products"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"orders": {
+                  Row: {
+                    "created_at": string,"currency": string,"delivery_address": string | null,"delivery_city": string | null,"delivery_fee": number,"delivery_name": string | null,"delivery_notes": string | null,"delivery_phone": string | null,"delivery_region_id": number | null,"expires_at": string,"id": string,"kind": Database["public"]['Enums']["order_kind"],"order_number": string,"paid_at": string | null,"payment_status": Database["public"]['Enums']["payment_status"],"staff_note": string | null,"status": Database["public"]['Enums']["order_status"],"subtotal": number,"topup_attempts": number,"topup_bundle_id": string | null,"topup_bundle_name": string | null,"topup_last_error": string | null,"topup_network": Database["public"]['Enums']["mobile_network"] | null,"topup_provider_code": string | null,"topup_provider_reference": string | null,"topup_recipient": string | null,"topup_status": Database["public"]['Enums']["topup_status"] | null,"topup_type": string | null,"total": number,"updated_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"currency"?: string,"delivery_address"?: string | null,"delivery_city"?: string | null,"delivery_fee"?: number,"delivery_name"?: string | null,"delivery_notes"?: string | null,"delivery_phone"?: string | null,"delivery_region_id"?: number | null,"expires_at"?: string,"id"?: string,"kind": Database["public"]['Enums']["order_kind"],"order_number"?: string,"paid_at"?: string | null,"payment_status"?: Database["public"]['Enums']["payment_status"],"staff_note"?: string | null,"status"?: Database["public"]['Enums']["order_status"],"subtotal": number,"topup_attempts"?: number,"topup_bundle_id"?: string | null,"topup_bundle_name"?: string | null,"topup_last_error"?: string | null,"topup_network"?: Database["public"]['Enums']["mobile_network"] | null,"topup_provider_code"?: string | null,"topup_provider_reference"?: string | null,"topup_recipient"?: string | null,"topup_status"?: Database["public"]['Enums']["topup_status"] | null,"topup_type"?: string | null,"total": number,"updated_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"currency"?: string,"delivery_address"?: string | null,"delivery_city"?: string | null,"delivery_fee"?: number,"delivery_name"?: string | null,"delivery_notes"?: string | null,"delivery_phone"?: string | null,"delivery_region_id"?: number | null,"expires_at"?: string,"id"?: string,"kind"?: Database["public"]['Enums']["order_kind"],"order_number"?: string,"paid_at"?: string | null,"payment_status"?: Database["public"]['Enums']["payment_status"],"staff_note"?: string | null,"status"?: Database["public"]['Enums']["order_status"],"subtotal"?: number,"topup_attempts"?: number,"topup_bundle_id"?: string | null,"topup_bundle_name"?: string | null,"topup_last_error"?: string | null,"topup_network"?: Database["public"]['Enums']["mobile_network"] | null,"topup_provider_code"?: string | null,"topup_provider_reference"?: string | null,"topup_recipient"?: string | null,"topup_status"?: Database["public"]['Enums']["topup_status"] | null,"topup_type"?: string | null,"total"?: number,"updated_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "orders_delivery_region_id_fkey"
+      columns: ["delivery_region_id"]
+isOneToOne: false
+      referencedRelation: "regions"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "orders_topup_bundle_id_fkey"
+      columns: ["topup_bundle_id"]
+isOneToOne: false
+      referencedRelation: "topup_bundles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "orders_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"payment_events": {
                   Row: {
                     "event_type": string,"id": number,"payload": NonNullable<Json>,"payment_id": string | null,"provider": string,"provider_event_id": string,"received_at": string,"status_after": Database["public"]['Enums']["payment_status"] | null,"status_before": Database["public"]['Enums']["payment_status"] | null
@@ -313,17 +423,23 @@ isOneToOne: false
                   ]
                 },"payments": {
                   Row: {
-                    "amount": number,"channel": string | null,"created_at": string,"currency": string,"id": string,"promotion_id": string | null,"provider": string,"provider_transaction_id": string | null,"purpose": string,"reference": string,"status": Database["public"]['Enums']["payment_status"],"updated_at": string,"user_id": string,"verified_at": string | null
+                    "amount": number,"channel": string | null,"checkout_id": string | null,"created_at": string,"currency": string,"id": string,"order_id": string | null,"promotion_id": string | null,"provider": string,"provider_transaction_id": string | null,"purpose": string,"reference": string,"status": Database["public"]['Enums']["payment_status"],"updated_at": string,"user_id": string,"verified_at": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "amount": number,"channel"?: string | null,"created_at"?: string,"currency"?: string,"id"?: string,"promotion_id"?: string | null,"provider": string,"provider_transaction_id"?: string | null,"purpose": string,"reference": string,"status"?: Database["public"]['Enums']["payment_status"],"updated_at"?: string,"user_id": string,"verified_at"?: string | null
+                    "amount": number,"channel"?: string | null,"checkout_id"?: string | null,"created_at"?: string,"currency"?: string,"id"?: string,"order_id"?: string | null,"promotion_id"?: string | null,"provider": string,"provider_transaction_id"?: string | null,"purpose": string,"reference": string,"status"?: Database["public"]['Enums']["payment_status"],"updated_at"?: string,"user_id": string,"verified_at"?: string | null
                   }
                   Update: {
-                    "amount"?: number,"channel"?: string | null,"created_at"?: string,"currency"?: string,"id"?: string,"promotion_id"?: string | null,"provider"?: string,"provider_transaction_id"?: string | null,"purpose"?: string,"reference"?: string,"status"?: Database["public"]['Enums']["payment_status"],"updated_at"?: string,"user_id"?: string,"verified_at"?: string | null
+                    "amount"?: number,"channel"?: string | null,"checkout_id"?: string | null,"created_at"?: string,"currency"?: string,"id"?: string,"order_id"?: string | null,"promotion_id"?: string | null,"provider"?: string,"provider_transaction_id"?: string | null,"purpose"?: string,"reference"?: string,"status"?: Database["public"]['Enums']["payment_status"],"updated_at"?: string,"user_id"?: string,"verified_at"?: string | null
                   }
                   Relationships: [
                     {
+      foreignKeyName: "payments_order_id_fkey"
+      columns: ["order_id"]
+isOneToOne: false
+      referencedRelation: "orders"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "payments_promotion_id_fkey"
       columns: ["promotion_id"]
 isOneToOne: false
@@ -533,6 +649,60 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"store_product_images": {
+                  Row: {
+                    "created_at": string,"id": string,"product_id": string,"sort_order": number,"storage_path": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"product_id": string,"sort_order"?: number,"storage_path": string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"product_id"?: string,"sort_order"?: number,"storage_path"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "store_product_images_product_id_fkey"
+      columns: ["product_id"]
+isOneToOne: false
+      referencedRelation: "store_products"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"store_products": {
+                  Row: {
+                    "brand": string | null,"category_id": string | null,"compare_at_price": number | null,"created_at": string,"description": string,"id": string,"is_active": boolean,"is_featured": boolean,"name": string,"price": number,"search_vector": unknown,"sku": string | null,"slug": string,"stock": number,"updated_at": string,"warranty": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "brand"?: string | null,"category_id"?: string | null,"compare_at_price"?: number | null,"created_at"?: string,"description"?: string,"id"?: string,"is_active"?: boolean,"is_featured"?: boolean,"name": string,"price": number,"search_vector"?: never,"sku"?: string | null,"slug"?: string,"stock"?: number,"updated_at"?: string,"warranty"?: string | null
+                  }
+                  Update: {
+                    "brand"?: string | null,"category_id"?: string | null,"compare_at_price"?: number | null,"created_at"?: string,"description"?: string,"id"?: string,"is_active"?: boolean,"is_featured"?: boolean,"name"?: string,"price"?: number,"search_vector"?: never,"sku"?: string | null,"slug"?: string,"stock"?: number,"updated_at"?: string,"warranty"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "store_products_category_id_fkey"
+      columns: ["category_id"]
+isOneToOne: false
+      referencedRelation: "categories"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"topup_bundles": {
+                  Row: {
+                    "created_at": string,"data_mb": number | null,"id": string,"is_active": boolean,"name": string,"network": Database["public"]['Enums']["mobile_network"],"price": number,"provider_code": string,"sort_order": number,"validity": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"data_mb"?: number | null,"id"?: string,"is_active"?: boolean,"name": string,"network": Database["public"]['Enums']["mobile_network"],"price": number,"provider_code": string,"sort_order"?: number,"validity"?: string | null
+                  }
+                  Update: {
+                    "created_at"?: string,"data_mb"?: number | null,"id"?: string,"is_active"?: boolean,"name"?: string,"network"?: Database["public"]['Enums']["mobile_network"],"price"?: number,"provider_code"?: string,"sort_order"?: number,"validity"?: string | null
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"user_blocks": {
                   Row: {
                     "blocked_id": string,"blocker_id": string,"created_at": string
@@ -590,6 +760,9 @@ isOneToOne: false
               "body": string,"created_at": string,"sender_id": string
             }[]
                            },
+"admin_retry_topup":
+{ Args: { "p_note": string,"p_order": string }; Returns: undefined
+                           },
 "admin_set_review_hidden":
 { Args: { "p_hidden": boolean,"p_reason": string,"p_review": string }; Returns: undefined
                            },
@@ -602,6 +775,9 @@ isOneToOne: false
 "admin_set_verified":
 { Args: { "p_reason": string,"p_user": string,"p_verified": boolean }; Returns: undefined
                            },
+"admin_update_order":
+{ Args: { "p_note": string,"p_order": string,"p_status": Database["public"]['Enums']["order_status"] }; Returns: undefined
+                           },
 "admin_update_report":
 { Args: { "p_note": string,"p_report": string,"p_status": Database["public"]['Enums']["report_status"] }; Returns: undefined
                            },
@@ -610,6 +786,9 @@ isOneToOne: false
                            },
 "can_sell":
 { Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"cancel_my_order":
+{ Args: { "p_order": string }; Returns: undefined
                            },
 "cancel_promotion":
 { Args: { "p_promotion": string }; Returns: undefined
@@ -620,10 +799,56 @@ isOneToOne: false
 "category_descendants":
 { Args: { "p_category": string }; Returns: string[]
                            },
+"confirm_order_payment":
+{ Args: { "p_amount": number,"p_order": string,"p_payment_status": Database["public"]['Enums']["payment_status"] }; Returns: {
+              "created_at": string,
+"currency": string,
+"delivery_address": string | null,
+"delivery_city": string | null,
+"delivery_fee": number,
+"delivery_name": string | null,
+"delivery_notes": string | null,
+"delivery_phone": string | null,
+"delivery_region_id": number | null,
+"expires_at": string,
+"id": string,
+"kind": Database["public"]['Enums']["order_kind"],
+"order_number": string,
+"paid_at": string | null,
+"payment_status": Database["public"]['Enums']["payment_status"],
+"staff_note": string | null,
+"status": Database["public"]['Enums']["order_status"],
+"subtotal": number,
+"topup_attempts": number,
+"topup_bundle_id": string | null,
+"topup_bundle_name": string | null,
+"topup_last_error": string | null,
+"topup_network": Database["public"]['Enums']["mobile_network"] | null,
+"topup_provider_code": string | null,
+"topup_provider_reference": string | null,
+"topup_recipient": string | null,
+"topup_status": Database["public"]['Enums']["topup_status"] | null,
+"topup_type": string | null,
+"total": number,
+"updated_at": string,
+"user_id": string
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "orders"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"delivery_fee_for":
+{ Args: { "p_region": number,"p_subtotal": number }; Returns: number
+                           },
 "expire_listings":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
 "expire_promotions":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"expire_unpaid_orders":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
 "find_prohibited_terms":
@@ -653,14 +878,29 @@ isOneToOne: false
 "log_admin_action":
 { Args: { "p_action": string,"p_meta"?: Json,"p_reason": string,"p_target_id": string,"p_target_type": string }; Returns: undefined
                            },
+"log_order_event":
+{ Args: { "p_note"?: string,"p_order": string,"p_status": string }; Returns: undefined
+                           },
 "mark_conversation_read":
 { Args: { "p_conversation": string }; Returns: undefined
                            },
 "notify":
 { Args: { "p_body": string,"p_link": string,"p_ref"?: string,"p_title": string,"p_type": string,"p_user": string }; Returns: undefined
                            },
+"place_goods_order":
+{ Args: { "p_address": string,"p_city": string,"p_name": string,"p_notes": string,"p_phone": string,"p_region": number }; Returns: string
+                           },
+"place_topup_order":
+{ Args: { "p_amount": number,"p_bundle"?: string,"p_network": Database["public"]['Enums']["mobile_network"],"p_recipient": string,"p_type": string }; Returns: string
+                           },
 "record_listing_event":
 { Args: { "p_kind": string,"p_listing": string }; Returns: undefined
+                           },
+"record_payment_failure":
+{ Args: { "p_order": string,"p_reason": string }; Returns: undefined
+                           },
+"record_topup_result":
+{ Args: { "p_delivered": boolean,"p_error"?: string,"p_order": string,"p_provider_reference"?: string }; Returns: undefined
                            },
 "renew_listing":
 { Args: { "p_listing": string }; Returns: undefined
@@ -712,7 +952,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "account_status": "active"|"suspended","attribute_type": "text"|"number"|"select"|"boolean","listing_condition": "new"|"used"|"refurbished"|"not_applicable","listing_status": "draft"|"pending_review"|"published"|"paused"|"sold"|"rejected"|"expired"|"removed","payment_status": "unpaid"|"pending"|"paid"|"failed"|"refunded"|"test","promotion_kind": "featured"|"boost","promotion_status": "pending_payment"|"active"|"expired"|"cancelled","report_reason": "scam"|"fake_or_misleading"|"prohibited_item"|"spam"|"harassment"|"impersonation"|"other","report_status": "open"|"reviewing"|"resolved"|"dismissed","user_role": "buyer"|"seller"|"admin"
+            "account_status": "active"|"suspended","attribute_type": "text"|"number"|"select"|"boolean","listing_condition": "new"|"used"|"refurbished"|"not_applicable","listing_status": "draft"|"pending_review"|"published"|"paused"|"sold"|"rejected"|"expired"|"removed","mobile_network": "mtn"|"telecel"|"airteltigo","order_kind": "goods"|"topup","order_status": "pending_payment"|"paid"|"processing"|"shipped"|"delivered"|"cancelled"|"failed"|"refund_due"|"refunded","payment_status": "unpaid"|"pending"|"paid"|"failed"|"refunded"|"test","promotion_kind": "featured"|"boost","promotion_status": "pending_payment"|"active"|"expired"|"cancelled","report_reason": "scam"|"fake_or_misleading"|"prohibited_item"|"spam"|"harassment"|"impersonation"|"other","report_status": "open"|"reviewing"|"resolved"|"dismissed","topup_status": "waiting_payment"|"sending"|"delivered"|"failed","user_role": "buyer"|"seller"|"admin"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -832,7 +1072,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "account_status": ["active", "suspended"],"attribute_type": ["text", "number", "select", "boolean"],"listing_condition": ["new", "used", "refurbished", "not_applicable"],"listing_status": ["draft", "pending_review", "published", "paused", "sold", "rejected", "expired", "removed"],"payment_status": ["unpaid", "pending", "paid", "failed", "refunded", "test"],"promotion_kind": ["featured", "boost"],"promotion_status": ["pending_payment", "active", "expired", "cancelled"],"report_reason": ["scam", "fake_or_misleading", "prohibited_item", "spam", "harassment", "impersonation", "other"],"report_status": ["open", "reviewing", "resolved", "dismissed"],"user_role": ["buyer", "seller", "admin"]
+            "account_status": ["active", "suspended"],"attribute_type": ["text", "number", "select", "boolean"],"listing_condition": ["new", "used", "refurbished", "not_applicable"],"listing_status": ["draft", "pending_review", "published", "paused", "sold", "rejected", "expired", "removed"],"mobile_network": ["mtn", "telecel", "airteltigo"],"order_kind": ["goods", "topup"],"order_status": ["pending_payment", "paid", "processing", "shipped", "delivered", "cancelled", "failed", "refund_due", "refunded"],"payment_status": ["unpaid", "pending", "paid", "failed", "refunded", "test"],"promotion_kind": ["featured", "boost"],"promotion_status": ["pending_payment", "active", "expired", "cancelled"],"report_reason": ["scam", "fake_or_misleading", "prohibited_item", "spam", "harassment", "impersonation", "other"],"report_status": ["open", "reviewing", "resolved", "dismissed"],"topup_status": ["waiting_payment", "sending", "delivered", "failed"],"user_role": ["buyer", "seller", "admin"]
           }
         }
 } as const

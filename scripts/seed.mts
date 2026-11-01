@@ -97,6 +97,43 @@ async function main() {
     }
     console.log(`list  ${s.title}`);
   }
+  // Store products (photos reuse the demo images)
+  const products = [
+    { name: "Galaxy A15, 128 GB, 4 GB RAM, black", brand: "Samsung", category: "mobile-phones", price: 2199, compare: 2499, stock: 14, image: "phone", featured: true, warranty: "12 months manufacturer warranty", description: "Brand new, sealed in box. 6.5-inch display, 50 MP camera, 5000 mAh battery, dual SIM. Works on all Ghanaian networks." },
+    { name: "13-inch laptop, Intel Core i5, 8 GB, 256 GB SSD", brand: "QuestHub Select", category: "laptops-computers", price: 5899, compare: null, stock: 6, image: "laptop", featured: true, warranty: "6 months warranty", description: "Light everyday laptop for school and work. Full HD screen, backlit keyboard, Windows 11 installed. Charger included." },
+    { name: "2.5 kVA petrol generator, electric start", brand: "PowerPlus", category: "generators-solar", price: 3450, compare: 3800, stock: 4, image: "generator", featured: false, warranty: "12 months warranty on engine", description: "Reliable backup power for a home: runs a fridge, TV, fans and lights. Electric and recoil start, 15-litre tank, about 9 hours at half load." },
+    { name: "Men's leather oxford shoes, brown", brand: "Kumasi Leather Co.", category: "shoes", price: 590, compare: null, stock: 25, image: "shoes", featured: false, warranty: null, description: "Hand-finished genuine leather oxfords, made in Kumasi. Sizes 40–46; choose your size in the delivery note." },
+    { name: "Fast charger 25 W with USB-C cable", brand: "QuestHub Select", category: "electronics-accessories", price: 120, compare: 150, stock: 60, image: "phone", featured: false, warranty: "3 months warranty", description: "25 W USB-C power adapter with a 1 m braided cable. Works with most Android phones and recent iPhones." },
+  ];
+  for (const p of products) {
+    const { data: exists } = await db.from("store_products").select("id").eq("name", p.name).maybeSingle();
+    if (exists) { console.log(`skip  product ${p.name}`); continue; }
+    const cat = cats!.find((c) => c.slug === p.category);
+    const { data: prod, error } = await db.from("store_products").insert({
+      name: p.name, brand: p.brand, category_id: cat?.id ?? null, price: p.price, compare_at_price: p.compare, stock: p.stock,
+      is_featured: p.featured, warranty: p.warranty, description: p.description,
+    }).select("id").single();
+    if (error) throw error;
+    const path = `products/${prod.id}/${randomUUID()}.webp`;
+    await db.storage.from("product-images").upload(path, readFileSync(`supabase/seed-images/${p.image}.webp`), { contentType: "image/webp" });
+    await db.from("store_product_images").insert({ product_id: prod.id, storage_path: path });
+    console.log(`prod  ${p.name}`);
+  }
+
+  // Sample data bundles. Codes are placeholders: replace them with your Hubtel codes in Admin → Data bundles.
+  const { count: bundleCount } = await db.from("topup_bundles").select("id", { count: "exact", head: true });
+  if (!bundleCount) {
+    const bundles = [
+      ["mtn", "1 GB", "7 days", 12], ["mtn", "5 GB", "30 days", 45], ["mtn", "15 GB", "30 days", 110],
+      ["telecel", "2 GB", "30 days", 20], ["telecel", "10 GB", "30 days", 80],
+      ["airteltigo", "3 GB", "30 days", 25], ["airteltigo", "12 GB", "30 days", 90],
+    ] as const;
+    await db.from("topup_bundles").insert(bundles.map(([network, name, validity, price], i) => ({
+      network, name, validity, price, provider_code: `DEMO-${network}-${name.replace(" ", "")}`, sort_order: i,
+    })));
+    console.log(`bund  ${bundles.length} sample data bundles (placeholder codes)`);
+  }
+
   console.log(`\nDone. Demo accounts use the password: ${PASSWORD}`);
 }
 

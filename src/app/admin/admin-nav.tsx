@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CreditCard, FolderTree, Flag, LayoutDashboard, ListChecks, Megaphone, ScrollText, Settings, Users } from "lucide-react";
+import { CreditCard, FolderTree, Flag, LayoutDashboard, ListChecks, Megaphone, Package, ScrollText, Settings, ShoppingBag, Smartphone, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
@@ -10,6 +10,9 @@ const items = [
   { href: "/admin/listings", label: "Listings", icon: ListChecks },
   { href: "/admin/reports", label: "Reports", icon: Flag },
   { href: "/admin/users", label: "Users", icon: Users },
+  { href: "/admin/orders", label: "Store orders", icon: Package },
+  { href: "/admin/products", label: "Store products", icon: ShoppingBag },
+  { href: "/admin/bundles", label: "Data bundles", icon: Smartphone },
   { href: "/admin/categories", label: "Categories", icon: FolderTree },
   { href: "/admin/promotions", label: "Promotions", icon: Megaphone },
   { href: "/admin/payments", label: "Payments", icon: CreditCard },

@@ -83,6 +83,7 @@ test("3-8. publish, favourite, message, privacy, report and admin removal", asyn
   const row = adminPage.getByRole("row", { name: new RegExp(title) });
   await row.getByRole("button", { name: "Approve" }).click();
   await adminPage.getByRole("dialog").getByRole("button", { name: "Approve" }).click();
+  await expect(adminPage.getByText("Listing approved.")).toBeVisible();
   await expect(row).toHaveCount(0);
 
   // 4. Buyer finds and saves it
@@ -138,6 +139,7 @@ test("3-8. publish, favourite, message, privacy, report and admin removal", asyn
   await reportRow.getByRole("button", { name: "Resolve" }).click();
   await adminPage.getByRole("dialog").getByRole("textbox").fill("Removed the listing");
   await adminPage.getByRole("dialog").getByRole("button", { name: "Resolve" }).click();
+  await expect(adminPage.getByText("Report marked resolved.")).toBeVisible();
   await expect(reportRow).toHaveCount(0);
 
   await signOut(outsiderPage);
