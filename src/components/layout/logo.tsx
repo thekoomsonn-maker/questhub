@@ -10,7 +10,7 @@ export function Logo({ inverted = false }: { inverted?: boolean }) {
         <path d="M19.5 19.5 25 25" stroke="var(--gold)" strokeWidth="3.6" strokeLinecap="round" />
       </svg>
       <span
-        className={`font-display text-[22px] font-bold ${inverted ? "text-white" : "text-ink"}`}
+        className={`font-display text-[22px] font-extrabold tracking-[-0.02em] ${inverted ? "text-white" : "text-ink"}`}
       >
         {site.name}
       </span>

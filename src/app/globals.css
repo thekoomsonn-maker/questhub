@@ -62,14 +62,11 @@ body {
   outline-offset: 2px;
 }
 
-/*
-  One family, two widths: Archivo at normal width for reading, stretched to
-  its widest for headings and prices, like hand-painted shop signage.
-*/
+/* Headings and prices: Archivo at its natural width, heavier weight. */
 .font-display {
   font-family: var(--font-display);
-  font-stretch: 125%;
-  letter-spacing: -0.01em;
+  font-stretch: 100%;
+  letter-spacing: -0.015em;
 }
 
 .tabular {
