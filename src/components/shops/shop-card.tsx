@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BadgeCheck, MapPin, Store } from "lucide-react";
+import { BadgeCheck, MapPin } from "lucide-react";
 import { avatarUrl } from "@/lib/images";
 
 export type ShopSummary = {
@@ -43,12 +43,12 @@ export function ShopCard({ shop }: { shop: ShopSummary }) {
   const banner = avatarUrl(shop.banner_path);
   return (
     <article className="relative overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface hover:border-line-strong">
-      <div className="flex h-20 items-center justify-center bg-brand-tint">
+      <div className="flex h-20 flex-col justify-end bg-brand">
         {banner ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={banner} alt="" loading="lazy" className="h-full w-full object-cover" />
         ) : (
-          <Store className="text-brand/30" size={32} aria-hidden />
+          <div className="kente-strip-thin" aria-hidden />
         )}
       </div>
       {featured ? (
@@ -58,7 +58,7 @@ export function ShopCard({ shop }: { shop: ShopSummary }) {
       ) : null}
       <div className="-mt-7 flex flex-col gap-1 p-3">
         <ShopLogo path={shop.logo_path} name={shop.name} />
-        <h3 className="mt-1 flex items-center gap-1 font-medium">
+        <h3 className="mt-1 flex items-center gap-1 font-display font-bold">
           <Link href={`/shop/${shop.slug}`} className="after:absolute after:inset-0">
             {shop.name}
           </Link>

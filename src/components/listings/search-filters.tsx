@@ -122,7 +122,7 @@ export function SearchFilters({
           <button className="absolute inset-0 bg-ink/40" aria-label="Close filters" onClick={() => setOpen(false)} />
           <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-[20px] bg-surface p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-lg font-semibold">Filters</h2>
+              <h2 className="font-display text-lg font-bold">Filters</h2>
               <button onClick={() => setOpen(false)} aria-label="Close" className="rounded-full p-2 hover:bg-paper"><X size={18} /></button>
             </div>
             {panel}

@@ -24,7 +24,7 @@ export default async function TestPaymentPage({ params }: PageProps<"/checkout/t
     <div className="mx-auto max-w-md px-4 py-12">
       <Card className="p-6 text-center">
         <FlaskConical className="mx-auto text-gold" size={36} aria-hidden />
-        <h1 className="mt-3 font-display text-2xl font-semibold">Test payment</h1>
+        <h1 className="mt-3 font-display text-2xl font-bold">Test payment</h1>
         <p className="mt-1 text-sm text-ink-soft">This stands in for the Paystack or NOWPayments page while payments are in test mode. No money is taken.</p>
         {payment.method === "crypto" ? (
           <>

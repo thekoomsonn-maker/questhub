@@ -14,7 +14,7 @@ export default async function SellPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12">
-      <h1 className="font-display text-3xl font-semibold tracking-tight">Start selling on QuestHub</h1>
+      <h1 className="font-display text-3xl font-bold">Start selling on QuestHub</h1>
       <p className="mt-2 text-ink-soft">Posting is free. Switch on selling for your account and you can post your first ad straight away.</p>
       {viewer.profile.status !== "active" ? (
         <div className="mt-6"><FormMessage>Your account is suspended, so you can&apos;t post ads right now.</FormMessage></div>

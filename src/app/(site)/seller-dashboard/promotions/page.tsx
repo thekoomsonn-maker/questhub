@@ -37,7 +37,7 @@ export default async function PromotionsPage({ searchParams }: PageProps<"/selle
       ) : null}
       <div className="grid gap-4 lg:grid-cols-[1fr_1.2fr]">
         <Card className="p-5">
-          <h2 className="font-display text-lg font-semibold">Promote a listing</h2>
+          <h2 className="font-display text-lg font-bold">Promote a listing</h2>
           {listings?.length && plans?.length ? (
             <PromoteForm listings={listings} plans={plans.map((p) => ({ ...p, priceLabel: formatPrice(p.price, p.currency) }))} defaultListing={typeof sp.listing === "string" ? sp.listing : undefined} />
           ) : (
@@ -45,14 +45,14 @@ export default async function PromotionsPage({ searchParams }: PageProps<"/selle
           )}
           {shopPlan ? (
             <div className="mt-6 border-t border-line pt-5">
-              <h2 className="font-display text-lg font-semibold">Advertise your shop</h2>
+              <h2 className="font-display text-lg font-bold">Advertise your shop</h2>
               <p className="mt-1 text-sm text-ink-soft">{shopPlan.description} {shopPlan.duration_days} days for {formatPrice(shopPlan.price, shopPlan.currency)}.</p>
               {shop?.status === "active" ? <PromoteShopButton planId={shopPlan.id} /> : <p className="mt-2 text-sm text-ink-faint">Available once your shop is live.</p>}
             </div>
           ) : null}
         </Card>
         <div>
-          <h2 className="mb-3 font-display text-lg font-semibold">History</h2>
+          <h2 className="mb-3 font-display text-lg font-bold">History</h2>
           {!history?.length ? (
             <EmptyState title="No promotions yet" body="Requests and active promotions appear here." />
           ) : (

@@ -45,7 +45,7 @@ export function EmptyState({
   return (
     <div className="flex flex-col items-center rounded-[var(--radius-card)] border border-dashed border-line-strong bg-surface px-6 py-12 text-center">
       {icon ? <div className="mb-3 text-ink-faint">{icon}</div> : null}
-      <h2 className="font-display text-lg font-semibold">{title}</h2>
+      <h2 className="font-display text-lg font-bold">{title}</h2>
       {body ? <p className="mt-1 max-w-md text-sm text-ink-soft">{body}</p> : null}
       {action ? <div className="mt-5">{action}</div> : null}
     </div>
@@ -64,7 +64,7 @@ export function PageHeader({
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h1>
+        <h1 className="font-display text-2xl font-bold sm:text-3xl">{title}</h1>
         {description ? <p className="mt-1 text-sm text-ink-soft">{description}</p> : null}
       </div>
       {actions ? <div className="flex gap-2">{actions}</div> : null}

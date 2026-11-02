@@ -36,7 +36,7 @@ export default async function AdminOrders({ searchParams }: PageProps<"/admin/or
           <tr key={o.id}>
             <td className="px-3 py-3">
               <p className="font-medium">{o.order_number}</p>
-              <p className="font-display font-semibold tabular">{formatPrice(o.total)}</p>
+              <p className="font-display font-bold tabular">{formatPrice(o.total)}</p>
               <p className="text-xs text-ink-faint">{formatDate(o.created_at)} {formatTime(o.created_at)}</p>
             </td>
             <td className="px-3 py-3 text-sm">

@@ -37,7 +37,7 @@ export default async function CartPage() {
                     {img ? <img src={img} alt="" className="h-20 w-20 shrink-0 rounded-[8px] bg-white object-contain" /> : <div className="h-20 w-20 shrink-0 rounded-[8px] bg-paper" />}
                     <div className="min-w-0 flex-1">
                       <Link href={`/store/${p.slug}`} className="line-clamp-2 text-sm font-medium hover:text-brand">{p.brand ? `${p.brand} ` : ""}{p.name}</Link>
-                      <p className="font-display font-semibold tabular">{formatPrice(p.price)}</p>
+                      <p className="font-display font-bold tabular">{formatPrice(p.price)}</p>
                       {issue ? <p className="text-xs font-medium text-danger">{issue}</p> : null}
                     </div>
                     <CartLineControls productId={p.id} quantity={quantity} max={Math.max(1, Math.min(20, p.stock))} />
@@ -47,7 +47,7 @@ export default async function CartPage() {
             </ul>
           </div>
           <Card className="h-fit p-5 lg:sticky lg:top-24">
-            <dl className="flex justify-between text-sm"><dt>Subtotal ({cart.count} items)</dt><dd className="font-display text-lg font-semibold tabular">{formatPrice(cart.subtotal)}</dd></dl>
+            <dl className="flex justify-between text-sm"><dt>Subtotal ({cart.count} items)</dt><dd className="font-display text-lg font-bold tabular">{formatPrice(cart.subtotal)}</dd></dl>
             <p className="mt-1 text-xs text-ink-faint">Delivery is calculated at checkout.</p>
             {problems.length ? (
               <p className="mt-4 text-sm text-danger">Fix the items marked above to continue.</p>

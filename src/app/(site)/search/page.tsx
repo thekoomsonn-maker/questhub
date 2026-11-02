@@ -14,7 +14,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
   const parsed = parseSearchParams(raw);
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
-      <h1 className="mb-4 font-display text-2xl font-semibold tracking-tight">
+      <h1 className="mb-4 font-display text-2xl font-bold">
         {parsed.q ? `Results for “${parsed.q}”` : "All listings"}
       </h1>
       <Suspense key={JSON.stringify(raw)} fallback={<ResultsSkeleton />}>

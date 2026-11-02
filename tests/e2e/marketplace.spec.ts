@@ -10,7 +10,7 @@ test("1. a guest can browse and search listings", async ({ page }) => {
   await publishedListing(seller.id, title);
 
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "What are you looking for today?" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Everything Circle sells. None of the traffic." })).toBeVisible();
   await page.locator("main").getByRole("combobox").fill(title);
   await page.locator("main").getByRole("button", { name: "Search" }).click();
   await expect(page).toHaveURL(/\/search\?q=/);

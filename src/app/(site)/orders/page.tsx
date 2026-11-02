@@ -44,7 +44,7 @@ export default async function OrdersPage() {
                     <p className="text-xs text-ink-faint">{formatDate(o.created_at)}</p>
                   </div>
                   <div className="flex flex-col items-end gap-1">
-                    <span className="font-display font-semibold tabular">{formatPrice(o.subtotal)}</span>
+                    <span className="font-display font-bold tabular">{formatPrice(o.subtotal)}</span>
                     <Badge tone={o.status === "completed" ? "success" : ["declined", "cancelled"].includes(o.status) ? "danger" : "brand"}>{vendorStatusLabel[o.status]}</Badge>
                   </div>
                 </Link>
@@ -69,7 +69,7 @@ export default async function OrdersPage() {
                   <p className="text-xs text-ink-faint">{formatDate(o.created_at)}</p>
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                  <span className="font-display font-semibold tabular">{formatPrice(o.total, o.currency)}</span>
+                  <span className="font-display font-bold tabular">{formatPrice(o.total, o.currency)}</span>
                   <OrderStatusBadge status={o.status} paymentStatus={o.payment_status} />
                 </div>
               </Link>

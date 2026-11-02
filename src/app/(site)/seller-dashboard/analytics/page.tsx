@@ -43,8 +43,8 @@ export default async function AnalyticsPage() {
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3">
-            <Card className="p-4"><p className="text-sm text-ink-soft">Views (30 days)</p><p className="font-display text-3xl font-semibold tabular">{totalViews.toLocaleString()}</p></Card>
-            <Card className="p-4"><p className="text-sm text-ink-soft">Contacts (30 days)</p><p className="font-display text-3xl font-semibold tabular">{totalContacts.toLocaleString()}</p><p className="text-xs text-ink-faint">New chats and phone reveals</p></Card>
+            <Card className="p-4"><p className="text-sm text-ink-soft">Views (30 days)</p><p className="font-display text-3xl font-bold tabular">{totalViews.toLocaleString()}</p></Card>
+            <Card className="p-4"><p className="text-sm text-ink-soft">Contacts (30 days)</p><p className="font-display text-3xl font-bold tabular">{totalContacts.toLocaleString()}</p><p className="text-xs text-ink-faint">New chats and phone reveals</p></Card>
           </div>
           <Card className="mt-4 p-4">
             <h2 className="mb-3 text-sm font-medium">Daily views</h2>

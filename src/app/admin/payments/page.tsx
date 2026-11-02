@@ -22,7 +22,7 @@ export default async function AdminPayments() {
             <td className="px-3 py-3 font-mono text-xs">{p.reference}<div className="text-ink-faint">{p.provider}{p.channel ? ` · ${p.channel}` : ""}</div></td>
             <td className="px-3 py-3">{p.user?.display_name}</td>
             <td className="px-3 py-3 text-ink-soft">{p.purpose}</td>
-            <td className="px-3 py-3 font-display font-semibold tabular">
+            <td className="px-3 py-3 font-display font-bold tabular">
               {formatPrice(p.amount, p.currency)}
               {p.method === "crypto" ? <div className="font-sans text-xs font-normal text-ink-faint">US${Number(p.provider_amount).toFixed(2)}{p.pay_currency ? ` paid in ${p.pay_currency.toUpperCase()}` : ""}</div> : null}
             </td>

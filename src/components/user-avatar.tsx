@@ -32,7 +32,7 @@ export function UserAvatar({
   ) : (
     <span
       aria-hidden
-      className={cn("inline-flex shrink-0 items-center justify-center rounded-full bg-brand-tint font-display font-semibold text-brand", className)}
+      className={cn("inline-flex shrink-0 items-center justify-center rounded-full bg-brand-tint font-display font-bold text-brand", className)}
       style={{ width: size, height: size, fontSize: size * 0.38 }}
     >
       {initials || "?"}

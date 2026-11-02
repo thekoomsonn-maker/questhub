@@ -72,7 +72,7 @@ export function ReportButton({
             });
           }}
         >
-          <h2 className="font-display text-lg font-semibold">{label}</h2>
+          <h2 className="font-display text-lg font-bold">{label}</h2>
           <p className="text-sm text-ink-soft">Reports are private. The person you report won&apos;t know who sent it.</p>
           <Field id={`reason-${targetId}`} label="What's wrong?" error={error ?? undefined} required>
             <Select id={`reason-${targetId}`} value={reason} onChange={(e) => setReason(e.target.value)}>

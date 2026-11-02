@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@fontsource-variable/bricolage-grotesque/wght.css";
+@import "@fontsource-variable/archivo/wdth.css";
 
 /*
   QuestHub design tokens. Brand colours live here and in src/config/site.ts,
@@ -41,8 +41,8 @@
   --color-success-tint: var(--success-tint);
   --color-danger: var(--danger);
   --color-danger-tint: var(--danger-tint);
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Bricolage Grotesque Variable", var(--font-geist-sans), sans-serif;
+  --font-sans: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
   --radius-card: 14px;
   --radius-field: 10px;
 }
@@ -62,21 +62,39 @@ body {
   outline-offset: 2px;
 }
 
+/*
+  One family, two widths: Archivo at normal width for reading, stretched to
+  its widest for headings and prices, like hand-painted shop signage.
+*/
 .font-display {
   font-family: var(--font-display);
-  font-optical-sizing: auto;
+  font-stretch: 125%;
+  letter-spacing: -0.01em;
 }
 
 .tabular {
   font-variant-numeric: tabular-nums;
 }
 
-/* Woven texture for the home search band (the one decorative element). */
-.weave {
-  background-color: var(--brand);
-  background-image:
-    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.05) 0 2px, transparent 2px 18px),
-    repeating-linear-gradient(0deg, rgb(255 255 255 / 0.04) 0 2px, transparent 2px 18px);
+/*
+  Kente strip: the one decorative element. Blocks of gold, green and red on
+  indigo, the way strips are woven and sewn edge to edge.
+*/
+.kente-strip {
+  height: 14px;
+  background:
+    repeating-linear-gradient(90deg,
+      var(--gold) 0 28px, var(--brand) 28px 34px,
+      #1f7a4d 34px 52px, var(--brand) 52px 58px,
+      var(--gold) 58px 70px, #b8322a 70px 82px, var(--brand) 82px 88px);
+}
+.kente-strip-thin {
+  height: 6px;
+  background:
+    repeating-linear-gradient(90deg,
+      var(--gold) 0 28px, var(--brand) 28px 34px,
+      #1f7a4d 34px 52px, var(--brand) 52px 58px,
+      var(--gold) 58px 70px, #b8322a 70px 82px, var(--brand) 82px 88px);
 }
 
 @media (prefers-reduced-motion: reduce) {

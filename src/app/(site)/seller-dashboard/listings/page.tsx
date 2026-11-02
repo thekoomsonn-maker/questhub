@@ -78,7 +78,7 @@ export default async function SellerListingsPage({ searchParams }: PageProps<"/s
                   </div>
                   <div className="min-w-0">
                     <Link href={`/listing/${l.slug}`} className="line-clamp-1 font-medium hover:text-brand">{l.title}</Link>
-                    <p className="font-display font-semibold tabular">{formatPrice(l.price, l.currency)}</p>
+                    <p className="font-display font-bold tabular">{formatPrice(l.price, l.currency)}</p>
                     <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-faint">
                       <Badge tone={tone[l.status]}>{statusLabel[l.status]}</Badge>
                       <span className="tabular">{l.view_count} views</span>

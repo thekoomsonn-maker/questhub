@@ -88,7 +88,7 @@ export function ShopForm({ userId, regions, exists, images, initial }: {
       }}>
         {formError ? <FormMessage>{formError}</FormMessage> : null}
         <Card className="grid gap-4 p-5 sm:grid-cols-2">
-          <h2 className="font-display text-lg font-semibold sm:col-span-2">About your shop</h2>
+          <h2 className="font-display text-lg font-bold sm:col-span-2">About your shop</h2>
           <Field id="s-name" label="Shop name" required error={err("name")}><Input id="s-name" value={v.name} onChange={(e) => set("name", e.target.value)} maxLength={60} /></Field>
           <Field id="s-slug" label="Shop address" required hint={`${site.url.replace(/^https?:\/\//, "")}/shop/${v.slug || "your-shop"}`} error={err("slug")}>
             <Input id="s-slug" value={v.slug} onChange={(e) => set("slug", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))} maxLength={50} />
@@ -97,7 +97,7 @@ export function ShopForm({ userId, regions, exists, images, initial }: {
           <Field id="s-about" label="About" className="sm:col-span-2"><Textarea id="s-about" value={v.about} onChange={(e) => set("about", e.target.value)} maxLength={2000} rows={4} /></Field>
         </Card>
         <Card className="grid gap-4 p-5 sm:grid-cols-2">
-          <h2 className="font-display text-lg font-semibold sm:col-span-2">Location and contact</h2>
+          <h2 className="font-display text-lg font-bold sm:col-span-2">Location and contact</h2>
           <Field id="s-region" label="Region" required error={err("regionId")}>
             <Select id="s-region" value={v.regionId} onChange={(e) => set("regionId", e.target.value)}>
               <option value="">Choose a region</option>
@@ -112,7 +112,7 @@ export function ShopForm({ userId, regions, exists, images, initial }: {
         </Card>
         <Card className="grid gap-4 p-5 sm:grid-cols-2">
           <div className="sm:col-span-2">
-            <h2 className="font-display text-lg font-semibold">Online orders</h2>
+            <h2 className="font-display text-lg font-bold">Online orders</h2>
             <p className="text-sm text-ink-soft">Buyers pay you directly. QuestHub doesn&apos;t take or hold the money.</p>
           </div>
           <Field id="s-delivery" label="Delivery and pickup" hint="Areas you deliver to, fees, delivery times, or pickup details." className="sm:col-span-2"><Textarea id="s-delivery" value={v.deliveryInfo} onChange={(e) => set("deliveryInfo", e.target.value)} maxLength={500} rows={3} /></Field>

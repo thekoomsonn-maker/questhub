@@ -36,7 +36,7 @@ export default async function ProductPage({ params }: PageProps<"/store/[slug]">
         <div className="flex flex-col gap-4">
           <div>
             {product.brand ? <p className="text-sm font-medium text-ink-soft">{product.brand}</p> : null}
-            <h1 className="font-display text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">{product.name}</h1>
+            <h1 className="font-display text-2xl font-bold leading-tight sm:text-3xl">{product.name}</h1>
           </div>
           <div className="flex items-baseline gap-3">
             <p className="font-display text-3xl font-bold tabular">{formatPrice(product.price)}</p>
@@ -50,7 +50,7 @@ export default async function ProductPage({ params }: PageProps<"/store/[slug]">
             <p className="flex gap-3 p-3"><RotateCcw size={18} className="shrink-0 text-brand" aria-hidden /> Wrong or faulty item? Contact us within 7 days of delivery.</p>
           </Card>
           <section>
-            <h2 className="font-display text-lg font-semibold">About this item</h2>
+            <h2 className="font-display text-lg font-bold">About this item</h2>
             <p className="mt-2 whitespace-pre-line text-[15px] leading-relaxed">{product.description}</p>
             {product.sku ? <p className="mt-3 text-xs text-ink-faint">SKU {product.sku}</p> : null}
           </section>

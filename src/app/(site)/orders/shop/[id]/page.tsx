@@ -30,7 +30,7 @@ export default async function ShopOrderPage({ params, searchParams }: PageProps<
     <div className="mx-auto max-w-3xl px-4 py-8">
       <Link href="/orders" className="text-sm text-brand hover:underline">All orders</Link>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-2xl font-semibold tracking-tight">Order {o.order_number}</h1>
+        <h1 className="font-display text-2xl font-bold">Order {o.order_number}</h1>
         <Badge tone={o.status === "completed" ? "success" : ["declined", "cancelled"].includes(o.status) ? "danger" : o.status === "requested" ? "gold" : "brand"}>{vendorStatusLabel[o.status]}</Badge>
       </div>
       <p className="text-sm text-ink-faint">Placed {formatDate(o.created_at)} at {formatTime(o.created_at)}</p>
@@ -55,8 +55,8 @@ export default async function ShopOrderPage({ params, searchParams }: PageProps<
           <span className="font-medium">{o.shop?.name}</span>
         </Link>
         <ul className="mt-4 divide-y divide-line text-sm">{o.vendor_order_items.map((i) => <li key={i.id} className="flex justify-between py-2"><span>{i.quantity} × {i.title}</span><span className="tabular">{formatPrice(i.line_total)}</span></li>)}</ul>
-        <div className="flex justify-between border-t border-line pt-3 font-semibold"><span>Total</span><span className="font-display tabular">{formatPrice(o.subtotal)}</span></div>
-        <p className="mt-2 text-sm text-ink-soft">{o.payment_method === "pay_on_delivery" ? "Pay on delivery or pickup" : "MoMo to the shop"}{o.vendor_confirmed_payment ? " · payment received by shop" : o.buyer_marked_paid ? " · you marked this as paid" : ""}</p>
+        <div className="flex justify-between border-t border-line pt-3 font-bold"><span>Total</span><span className="font-display tabular">{formatPrice(o.subtotal)}</span></div>
+        <p className="mt-2 text-sm text-ink-soft">{o.payment_method === "pay_on_delivery" ? "Pay on delivery or pickup" : "Pay the shop by MoMo"}{o.vendor_confirmed_payment ? ". The shop has confirmed your payment." : o.buyer_marked_paid ? ". You marked this as paid." : ""}</p>
         {o.shop?.phone || o.shop?.whatsapp ? <p className="mt-1 text-sm">Shop contact: {[o.shop.phone, o.shop.whatsapp].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(" / ")}</p> : null}
       </Card>
 

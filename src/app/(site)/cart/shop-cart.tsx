@@ -12,7 +12,7 @@ export async function ShopCartSection({ userId }: { userId: string }) {
   if (!groups.length) return null;
   return (
     <section className="mt-8" aria-labelledby="shop-cart">
-      <h2 id="shop-cart" className="font-display text-xl font-semibold">From shops</h2>
+      <h2 id="shop-cart" className="font-display text-xl font-bold">From shops</h2>
       <p className="mb-3 text-sm text-ink-soft">Each shop confirms and delivers its own order. You pay the shop directly.</p>
       <div className="flex flex-col gap-4">
         {groups.map(({ shop, items, subtotal }) => {
@@ -22,7 +22,7 @@ export async function ShopCartSection({ userId }: { userId: string }) {
               <div className="flex items-center gap-3 border-b border-line bg-paper px-4 py-3">
                 <ShopLogo path={shop.logo_path} name={shop.name} size={32} />
                 <Link href={`/shop/${shop.slug}`} className="flex-1 font-medium hover:text-brand">{shop.name}</Link>
-                <span className="font-display font-semibold tabular">{formatPrice(subtotal)}</span>
+                <span className="font-display font-bold tabular">{formatPrice(subtotal)}</span>
               </div>
               <ul className="divide-y divide-line">
                 {items.map(({ listing: l, quantity }) => {
@@ -34,7 +34,7 @@ export async function ShopCartSection({ userId }: { userId: string }) {
                       {cover ? <img src={listingImageUrl(cover.storage_path)!} alt="" className="h-16 w-16 shrink-0 rounded-[8px] object-cover" /> : <div className="h-16 w-16 rounded-[8px] bg-paper" />}
                       <div className="min-w-0 flex-1">
                         <Link href={`/listing/${l.slug}`} className="line-clamp-2 text-sm font-medium hover:text-brand">{l.title}</Link>
-                        <p className="font-display font-semibold tabular">{formatPrice(l.price, l.currency)}</p>
+                        <p className="font-display font-bold tabular">{formatPrice(l.price, l.currency)}</p>
                         {issue ? <p className="text-xs font-medium text-danger">{issue}</p> : null}
                       </div>
                       <ShopCartLineControls listingId={l.id} quantity={quantity} max={Math.max(quantity, Math.min(50, l.quantity))} />

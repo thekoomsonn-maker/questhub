@@ -19,13 +19,12 @@
     "check": "npm run typecheck && npm run lint && npm test && npm run test:integration"
   },
   "dependencies": {
-    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/archivo": "^5.3.0",
     "@hookform/resolvers": "^7.0.1",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.118.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "geist": "^1.9.0",
     "lucide-react": "^1.66.0",
     "next": "16.4.3",
     "react": "19.3.0",

@@ -43,7 +43,7 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
       <Card className="flex items-center gap-4 p-5">
         <UserAvatar name={profile.display_name} path={profile.avatar_path} size={64} />
         <div className="min-w-0 flex-1">
-          <h1 className="truncate font-display text-2xl font-semibold">{profile.display_name}</h1>
+          <h1 className="truncate font-display text-2xl font-bold">{profile.display_name}</h1>
           <p className="truncate text-sm text-ink-soft">{viewer.email}</p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             <Badge tone="brand">{profile.role === "admin" ? "Administrator" : isSeller ? "Seller" : "Buyer"}</Badge>

@@ -38,7 +38,7 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/or
     <div className="mx-auto max-w-3xl px-4 py-8">
       <Link href="/orders" className="text-sm text-brand hover:underline">All orders</Link>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-2xl font-semibold tracking-tight">Order {o.order_number}</h1>
+        <h1 className="font-display text-2xl font-bold">Order {o.order_number}</h1>
         <OrderStatusBadge status={o.status} paymentStatus={o.payment_status} />
       </div>
       <p className="text-sm text-ink-faint">Placed {formatDate(o.created_at)} at {formatTime(o.created_at)}</p>
@@ -58,7 +58,7 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/or
             <div><dt className="text-ink-faint">Type</dt><dd className="font-medium">{o.topup_type === "data" ? `Data: ${o.topup_bundle_name}` : "Airtime"}</dd></div>
             <div><dt className="text-ink-faint">Network</dt><dd className="font-medium">{networkName[o.topup_network!]}</dd></div>
             <div><dt className="text-ink-faint">Number</dt><dd className="font-medium tabular">{o.topup_recipient}</dd></div>
-            <div><dt className="text-ink-faint">Amount</dt><dd className="font-display font-semibold tabular">{formatPrice(o.total)}</dd></div>
+            <div><dt className="text-ink-faint">Amount</dt><dd className="font-display font-bold tabular">{formatPrice(o.total)}</dd></div>
           </dl>
         ) : (
           <>
@@ -70,7 +70,7 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/or
             <dl className="mt-3 space-y-1 border-t border-line pt-3 text-sm">
               <div className="flex justify-between"><dt>Subtotal</dt><dd className="tabular">{formatPrice(o.subtotal)}</dd></div>
               <div className="flex justify-between"><dt>Delivery</dt><dd className="tabular">{Number(o.delivery_fee) === 0 ? "Free" : formatPrice(o.delivery_fee)}</dd></div>
-              <div className="flex justify-between text-base font-semibold"><dt>Total</dt><dd className="font-display tabular">{formatPrice(o.total)}</dd></div>
+              <div className="flex justify-between text-base font-bold"><dt>Total</dt><dd className="font-display tabular">{formatPrice(o.total)}</dd></div>
             </dl>
             <div className="mt-4 border-t border-line pt-3 text-sm">
               <p className="font-medium">Delivering to</p>

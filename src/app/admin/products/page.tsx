@@ -28,7 +28,7 @@ export default async function AdminProducts() {
                 </Link>
               </td>
               <td className="px-3 py-3 text-ink-soft">{p.category?.name ?? "—"}</td>
-              <td className="px-3 py-3 font-display font-semibold tabular">{formatPrice(p.price)}</td>
+              <td className="px-3 py-3 font-display font-bold tabular">{formatPrice(p.price)}</td>
               <td className="px-3 py-3 tabular"><span className={p.stock === 0 ? "text-danger" : p.stock <= 5 ? "text-[#9a6a00]" : ""}>{p.stock}</span></td>
               <td className="px-3 py-3"><Badge tone={p.is_active ? "success" : "neutral"}>{p.is_active ? "On sale" : "Hidden"}</Badge>{p.is_featured ? <Badge tone="gold" className="ml-1">Featured</Badge> : null}</td>
             </tr>

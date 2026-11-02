@@ -67,7 +67,7 @@ export function ListingRowActions({ listing, buyers }: { listing: Row; buyers: {
             run(() => setListingStatus(listing.id, "sold", buyer || null));
           }}
         >
-          <h2 className="font-display text-lg font-semibold">Mark as sold</h2>
+          <h2 className="font-display text-lg font-bold">Mark as sold</h2>
           <p className="text-sm text-ink-soft">Buyers who messaged you will see it&apos;s sold. If you sold it to someone through {"QuestHub"}, choose them so they can leave you a review.</p>
           <Field id={`buyer-${listing.id}`} label="Who bought it?">
             <Select id={`buyer-${listing.id}`} value={buyer} onChange={(e) => setBuyer(e.target.value)}>

@@ -33,7 +33,7 @@ export function ShopCheckoutForm({ shopId, shop, regions, items, subtotal, defau
       <div className="flex flex-col gap-4">
         {state && !state.ok ? <FormMessage>{state.error}</FormMessage> : null}
         <Card className="grid gap-4 p-5 sm:grid-cols-2">
-          <h2 className="font-display text-lg font-semibold sm:col-span-2">Your details</h2>
+          <h2 className="font-display text-lg font-bold sm:col-span-2">Your details</h2>
           <Field id="name" label="Name" required error={fe("name")}><Input id="name" name="name" defaultValue={defaults.name} autoComplete="name" /></Field>
           <Field id="phone" label="Phone" required error={fe("phone")}><Input id="phone" name="phone" type="tel" defaultValue={defaults.phone} placeholder="024 123 4567" /></Field>
           <Field id="regionId" label="Region"><Select id="regionId" name="regionId" defaultValue={defaults.regionId ?? ""}><option value="">Choose a region</option>{regions.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}</Select></Field>
@@ -44,9 +44,9 @@ export function ShopCheckoutForm({ shopId, shop, regions, items, subtotal, defau
         {shop.delivery_info ? <Card className="p-5 text-sm"><h2 className="font-medium">Delivery from {shop.name}</h2><p className="mt-1 whitespace-pre-line text-ink-soft">{shop.delivery_info}</p></Card> : null}
       </div>
       <Card className="h-fit p-5 lg:sticky lg:top-24">
-        <h2 className="font-display text-lg font-semibold">Summary</h2>
+        <h2 className="font-display text-lg font-bold">Summary</h2>
         <ul className="mt-3 space-y-2 text-sm">{items.map((i) => <li key={i.title} className="flex justify-between gap-3"><span className="min-w-0 truncate">{i.quantity} × {i.title}</span><span className="tabular">{formatPrice(i.lineTotal)}</span></li>)}</ul>
-        <div className="mt-3 flex justify-between border-t border-line pt-3 font-semibold"><span>Items total</span><span className="font-display tabular">{formatPrice(subtotal)}</span></div>
+        <div className="mt-3 flex justify-between border-t border-line pt-3 font-bold"><span>Items total</span><span className="font-display tabular">{formatPrice(subtotal)}</span></div>
         <p className="text-xs text-ink-faint">Any delivery fee is agreed with the shop.</p>
         <fieldset className="mt-4 flex flex-col gap-2">
           <legend className="mb-1.5 text-sm font-medium">How you&apos;ll pay</legend>

@@ -68,7 +68,7 @@ export default async function SellerPage({ params }: PageProps<"/seller/[id]">) 
       <Card className="flex flex-col gap-5 p-6 sm:flex-row sm:items-start">
         <UserAvatar name={seller.display_name} path={seller.avatar_path} size={88} />
         <div className="min-w-0 flex-1">
-          <h1 className="font-display text-3xl font-semibold tracking-tight">{seller.display_name}</h1>
+          <h1 className="font-display text-3xl font-bold">{seller.display_name}</h1>
           <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-ink-soft">
             {seller.is_verified ? (
               <Badge tone="success"><ShieldCheck size={12} aria-hidden /> Verified seller{seller.verified_at ? ` since ${formatDate(seller.verified_at)}` : ""}</Badge>
@@ -78,7 +78,7 @@ export default async function SellerPage({ params }: PageProps<"/seller/[id]">) 
             <span>Joined {formatDate(seller.created_at)}</span>
           </div>
           {seller.bio ? <p className="mt-3 max-w-prose whitespace-pre-line text-[15px] text-ink">{seller.bio}</p> : null}
-          <p className="mt-3 text-sm text-ink-soft">{stats.activeCount} active · {stats.soldCount} sold on {site.name}</p>
+          <p className="mt-3 text-sm text-ink-soft">{stats.activeCount} active {stats.activeCount === 1 ? "ad" : "ads"}, {stats.soldCount} sold on {site.name}</p>
         </div>
         {!isSelf ? (
           <div className="flex gap-3 sm:flex-col sm:items-end">
@@ -89,7 +89,7 @@ export default async function SellerPage({ params }: PageProps<"/seller/[id]">) 
       </Card>
 
       <section className="mt-8" aria-labelledby="ads">
-        <h2 id="ads" className="mb-4 font-display text-xl font-semibold">Listings</h2>
+        <h2 id="ads" className="mb-4 font-display text-xl font-bold">Listings</h2>
         {cards.length ? (
           <ListingGrid>{cards.map((l) => <ListingCard key={l.id} listing={l} favorited={favs.has(l.id)} signedIn={Boolean(viewer)} />)}</ListingGrid>
         ) : <EmptyState title="No active listings" body="This seller has nothing for sale right now." />}
@@ -97,7 +97,7 @@ export default async function SellerPage({ params }: PageProps<"/seller/[id]">) 
 
       {reviews.data?.length ? (
         <section className="mt-8" aria-labelledby="reviews">
-          <h2 id="reviews" className="mb-1 font-display text-xl font-semibold">Reviews</h2>
+          <h2 id="reviews" className="mb-1 font-display text-xl font-bold">Reviews</h2>
           <p className="mb-4 text-sm text-ink-soft">Only buyers the seller confirmed a sale with can leave a review.</p>
           <ul className="grid gap-3 md:grid-cols-2">
             {reviews.data.map((r) => (

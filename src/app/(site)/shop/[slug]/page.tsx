@@ -50,12 +50,12 @@ export default async function ShopPage({ params, searchParams }: PageProps<"/sho
       <section className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
         <div className="h-32 bg-brand sm:h-48">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {banner ? <img src={banner} alt="" className="h-full w-full object-cover" /> : <div className="weave h-full" />}
+          {banner ? <img src={banner} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full flex-col justify-end bg-brand"><div className="kente-strip" /></div>}
         </div>
         <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-end">
           <div className="-mt-14 sm:-mt-16"><ShopLogo path={shop.logo_path} name={shop.name} size={88} /></div>
           <div className="min-w-0 flex-1">
-            <h1 className="flex items-center gap-2 font-display text-3xl font-semibold tracking-tight">
+            <h1 className="flex items-center gap-2 font-display text-3xl font-bold">
               {shop.name}
               {shop.is_verified ? <BadgeCheck className="shrink-0 text-success" size={24} aria-label="Verified business" /> : null}
             </h1>
@@ -80,7 +80,7 @@ export default async function ShopPage({ params, searchParams }: PageProps<"/sho
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_300px]">
         <section aria-labelledby="products">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <h2 id="products" className="font-display text-xl font-semibold">Products</h2>
+            <h2 id="products" className="font-display text-xl font-bold">Products</h2>
             <form method="get" role="search" className="flex gap-2">
               <Input name="q" defaultValue={q} placeholder={`Search ${shop.name}`} aria-label="Search this shop" className="h-10 w-56" />
             </form>

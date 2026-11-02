@@ -94,7 +94,7 @@ export function TopupForm({ bundles, min, max, signedIn, defaultNumber, disabled
                       <span className="block text-sm font-medium">{b.name}</span>
                       {b.validity ? <span className="text-xs text-ink-faint">{b.validity}</span> : null}
                     </span>
-                    <span className="font-display font-semibold tabular">{formatPrice(b.price)}</span>
+                    <span className="font-display font-bold tabular">{formatPrice(b.price)}</span>
                   </label>
                 ))}
               </div>

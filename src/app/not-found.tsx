@@ -8,7 +8,7 @@ export default function NotFound() {
       <Link href="/" aria-label="Home">
         <Logo />
       </Link>
-      <h1 className="mt-8 font-display text-3xl font-semibold">We couldn&apos;t find that page</h1>
+      <h1 className="mt-8 font-display text-3xl font-bold">We couldn&apos;t find that page</h1>
       <p className="mt-2 text-sm text-ink-soft">
         The listing may have been sold, removed, or the link is wrong.
       </p>

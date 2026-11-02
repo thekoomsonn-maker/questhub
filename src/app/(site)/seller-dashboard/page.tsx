@@ -31,7 +31,7 @@ export default async function SellerOverviewPage() {
     <>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">Hello, {viewer.profile.display_name.split(" ")[0]}</h1>
+          <h1 className="font-display text-2xl font-bold sm:text-3xl">Hello, {viewer.profile.display_name.split(" ")[0]}</h1>
           <p className="mt-1 text-sm text-ink-soft">Your listings have had {pluralize(views, "view")} and {pluralize(contacts, "contact")} in total.</p>
         </div>
         <ButtonLink href="/seller-dashboard/listings/new">Post an ad</ButtonLink>
@@ -41,14 +41,14 @@ export default async function SellerOverviewPage() {
           <Link key={t.label} href={t.href}>
             <Card className="p-4 hover:border-brand">
               <p className="text-sm text-ink-soft">{t.label}</p>
-              <p className="mt-1 font-display text-3xl font-semibold tabular">{t.value}</p>
+              <p className="mt-1 font-display text-3xl font-bold tabular">{t.value}</p>
             </Card>
           </Link>
         ))}
       </div>
       {all.length === 0 ? (
         <Card className="mt-6 p-6">
-          <h2 className="font-display text-lg font-semibold">Post your first ad</h2>
+          <h2 className="font-display text-lg font-bold">Post your first ad</h2>
           <p className="mt-1 text-sm text-ink-soft">It takes about five minutes. Have your photos ready.</p>
           <ButtonLink href="/seller-dashboard/listings/new" className="mt-4">Start</ButtonLink>
         </Card>

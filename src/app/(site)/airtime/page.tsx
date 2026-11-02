@@ -22,7 +22,7 @@ export default async function AirtimePage() {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-8">
-      <h1 className="font-display text-3xl font-semibold tracking-tight">Airtime & data</h1>
+      <h1 className="font-display text-3xl font-bold">Airtime & data</h1>
       <p className="mt-1 text-ink-soft">Top up any MTN, Telecel or AirtelTigo number in Ghana. Pay with Mobile Money or card; it arrives in seconds.</p>
       <div className="mt-4 flex flex-col gap-2">
         {mode === "off" ? <FormMessage>Top-ups aren&apos;t switched on yet. Please check back soon.</FormMessage> : null}

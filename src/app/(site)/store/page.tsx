@@ -41,9 +41,9 @@ export default async function StorePage({ searchParams }: PageProps<"/store">) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
-      <section className="mb-6 grid gap-4 rounded-[var(--radius-card)] border border-line bg-surface p-5 md:grid-cols-[1fr_auto] md:items-center">
+      <section className="mb-6 grid gap-4 border-b border-line pb-6 md:grid-cols-[1fr_auto] md:items-end">
         <div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight">QuestHub Store</h1>
+          <h1 className="font-display text-4xl font-extrabold">QuestHub Store</h1>
           <p className="mt-1 text-ink-soft">Brand-new items sold and delivered by us. Pay with Mobile Money or card.</p>
           <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-ink-soft">
             <li className="flex items-center gap-1.5"><Truck size={16} className="text-brand" aria-hidden /> Delivery across Ghana</li>

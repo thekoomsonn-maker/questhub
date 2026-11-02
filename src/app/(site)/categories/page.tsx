@@ -18,7 +18,7 @@ export default async function CategoriesPage() {
               <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-brand-tint text-brand">
                 <CategoryIcon name={c.icon} size={20} />
               </span>
-              <h2 className="font-display text-lg font-semibold">{c.name}</h2>
+              <h2 className="font-display text-lg font-bold">{c.name}</h2>
             </Link>
             <ul className="mt-3 flex flex-wrap gap-1.5">
               {c.children.map((s) => (

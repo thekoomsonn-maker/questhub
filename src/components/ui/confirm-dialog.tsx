@@ -74,7 +74,7 @@ export function ConfirmDialog({
             });
           }}
         >
-          <h2 className="font-display text-lg font-semibold">{title}</h2>
+          <h2 className="font-display text-lg font-bold">{title}</h2>
           {body ? <div className="text-sm text-ink-soft">{body}</div> : null}
           {requireReason ? (
             <Field id={id} label={reasonLabel} error={error ?? undefined} required>

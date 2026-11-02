@@ -18,7 +18,7 @@ export default async function ShopsPage({ searchParams }: PageProps<"/shops">) {
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight">Shops</h1>
+          <h1 className="font-display text-3xl font-bold">Shops</h1>
           <p className="mt-1 text-ink-soft">Businesses selling on QuestHub. Order online and pay the shop directly, on delivery or by MoMo.</p>
         </div>
         <ButtonLink href="/seller-dashboard/shop" variant="secondary">Open your own shop</ButtonLink>

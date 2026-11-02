@@ -7,7 +7,7 @@ import { FavoriteButton } from "./favorite-button";
 
 export function Price({ value, currency, negotiable, size = "md" }: { value: number | string | null; currency?: string; negotiable?: boolean; size?: "md" | "lg" }) {
   return (
-    <p className={size === "lg" ? "font-display text-3xl font-bold tracking-tight tabular" : "font-display text-lg font-bold tracking-tight tabular"}>
+    <p className={size === "lg" ? "font-display text-3xl font-bold tabular" : "font-display text-lg font-bold tabular"}>
       {formatPrice(value, currency)}
       {negotiable ? <span className="ml-1.5 align-middle font-sans text-xs font-medium text-ink-faint">Negotiable</span> : null}
     </p>

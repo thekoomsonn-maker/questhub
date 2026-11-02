@@ -59,7 +59,7 @@ export default async function ConversationPage({ params }: PageProps<"/messages/
             {listingCover ? <img src={listingCover} alt="" className="h-10 w-10 rounded-[6px] object-cover" /> : null}
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{convo.listing.title}</p>
-              <p className="text-xs text-ink-soft"><span className="font-display font-semibold tabular">{formatPrice(convo.listing.price, convo.listing.currency)}</span>{convo.listing.status !== "published" ? ` · ${statusLabel[convo.listing.status]}` : ""}</p>
+              <p className="text-xs text-ink-soft"><span className="font-display font-bold tabular">{formatPrice(convo.listing.price, convo.listing.currency)}</span>{convo.listing.status !== "published" ? ` · ${statusLabel[convo.listing.status]}` : ""}</p>
             </div>
           </Link>
         ) : null}

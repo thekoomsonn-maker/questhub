@@ -213,7 +213,7 @@ export function ListingWizard({
 
       <form onSubmit={(e) => { e.preventDefault(); next(); }} noValidate>
         <Card className="p-5 sm:p-6">
-          <h2 className="font-display text-xl font-semibold">{STEPS[step]}</h2>
+          <h2 className="font-display text-xl font-bold">{STEPS[step]}</h2>
           {initial?.moderationNote && step === 1 ? (
             <div className="mt-3"><FormMessage tone="info">Moderator note: {initial.moderationNote}</FormMessage></div>
           ) : null}

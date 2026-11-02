@@ -26,7 +26,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
         <Link href="/categories" className="hover:text-brand">Categories</Link>
         {parent ? <> / <Link href={`/categories/${parent.slug}`} className="hover:text-brand">{parent.name}</Link></> : null}
       </nav>
-      <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">{category.name}</h1>
+      <h1 className="font-display text-2xl font-bold sm:text-3xl">{category.name}</h1>
       {children.length ? (
         <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Subcategories">
           {children.map((c) => (

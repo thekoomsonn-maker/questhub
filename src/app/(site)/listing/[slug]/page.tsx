@@ -109,7 +109,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[slug]
           <ImageGallery images={listing.images} title={listing.title} />
 
           <Card className="p-5">
-            <h2 className="font-display text-lg font-semibold">Details</h2>
+            <h2 className="font-display text-lg font-bold">Details</h2>
             <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-3 text-sm sm:grid-cols-3">
               {conditionLabel[listing.condition] ? (
                 <div><dt className="text-ink-faint">Condition</dt><dd className="font-medium">{conditionLabel[listing.condition]}</dd></div>
@@ -121,7 +121,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[slug]
                 <div key={v.attribute!.key}><dt className="text-ink-faint">{v.attribute!.label}</dt><dd className="font-medium">{attrValue(v)}</dd></div>
               ))}
             </dl>
-            <h2 className="mt-6 font-display text-lg font-semibold">Description</h2>
+            <h2 className="mt-6 font-display text-lg font-bold">Description</h2>
             <p className="mt-2 max-w-prose whitespace-pre-line text-[15px] leading-relaxed text-ink">{listing.description}</p>
             <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-4 text-xs text-ink-faint">
               <span className="flex items-center gap-1"><CalendarDays size={14} aria-hidden /> Posted {timeAgo(listing.published_at ?? listing.created_at)}</span>
@@ -161,6 +161,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[slug]
                   slug={listing.slug}
                   title={listing.title}
                   canContact={isLive}
+                  secondary={Boolean(canOrderOnline)}
                   phoneAvailable={Boolean(sharesPhone.data)}
                   signedIn={Boolean(viewer)}
                 />
@@ -170,18 +171,6 @@ export default async function ListingPage({ params }: PageProps<"/listing/[slug]
             <div className="mt-3 flex justify-end"><ShareButton title={listing.title} /></div>
           </Card>
 
-          {shop ? (
-            <Card className="p-4">
-              <Link href={`/shop/${shop.slug}`} className="flex items-center gap-3 hover:text-brand">
-                <ShopLogo path={shop.logo_path} name={shop.name} size={44} />
-                <span className="min-w-0">
-                  <span className="block text-xs text-ink-faint">Sold by</span>
-                  <span className="block truncate font-medium">{shop.name}</span>
-                </span>
-                <span className="ml-auto text-sm text-brand">Visit shop</span>
-              </Link>
-            </Card>
-          ) : null}
           {seller ? (
             <Card className="p-5">
               <Link href={`/seller/${seller.username ?? seller.id}`} className="flex items-center gap-3 hover:text-brand">
@@ -202,6 +191,13 @@ export default async function ListingPage({ params }: PageProps<"/listing/[slug]
                 ) : null}
                 <Badge>{stats.activeCount} active {stats.activeCount === 1 ? "ad" : "ads"}</Badge>
               </div>
+              {shop ? (
+                <Link href={`/shop/${shop.slug}`} className="mt-4 flex items-center gap-3 border-t border-line pt-4 hover:text-brand">
+                  <ShopLogo path={shop.logo_path} name={shop.name} size={36} />
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium">{shop.name}</span>
+                  <span className="text-sm font-medium text-brand">Visit shop</span>
+                </Link>
+              ) : null}
               {!isOwner ? (
                 <div className="mt-3"><ReportButton targetType="user" targetId={seller.id} signedIn={Boolean(viewer)} label="Report seller" className="text-xs" /></div>
               ) : null}
@@ -222,7 +218,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[slug]
 
       {others.length ? (
         <section className="mt-10" aria-labelledby="similar">
-          <h2 id="similar" className="mb-4 font-display text-xl font-semibold">More in {category.name}</h2>
+          <h2 id="similar" className="mb-4 font-display text-xl font-bold">More in {category.name}</h2>
           <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             {others.map((l) => <ListingCard key={l.id} listing={l} favorited={favs.has(l.id)} signedIn={Boolean(viewer)} />)}
           </div>

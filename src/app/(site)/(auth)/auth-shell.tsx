@@ -5,7 +5,7 @@ export function AuthShell({ title, intro, children, footer }: { title: string; i
   return (
     <div className="mx-auto grid max-w-5xl gap-10 px-4 py-10 md:grid-cols-[1fr_1.1fr] md:py-16">
       <section className="hidden flex-col justify-center md:flex">
-        <h2 className="font-display text-3xl font-semibold leading-tight tracking-tight">
+        <h2 className="font-display text-3xl font-bold leading-tight">
           From Accra to Tamale, buyers are looking for what you have.
         </h2>
         <ul className="mt-6 space-y-3 text-sm text-ink-soft">
@@ -15,7 +15,7 @@ export function AuthShell({ title, intro, children, footer }: { title: string; i
         </ul>
       </section>
       <section className="rounded-[var(--radius-card)] border border-line bg-surface p-6 sm:p-8">
-        <h1 className="font-display text-2xl font-semibold tracking-tight">{title}</h1>
+        <h1 className="font-display text-2xl font-bold">{title}</h1>
         {intro ? <p className="mt-1 text-sm text-ink-soft">{intro}</p> : null}
         <div className="mt-6">{children}</div>
         {footer ? <div className="mt-6 border-t border-line pt-4 text-sm text-ink-soft">{footer}</div> : null}

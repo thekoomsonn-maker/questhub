@@ -49,7 +49,7 @@ export default async function AdminListings({ searchParams }: PageProps<"/admin/
                   <img src={cover ? listingImageUrl(cover.storage_path)! : ""} alt="" className="h-14 w-16 shrink-0 rounded-[6px] bg-paper object-cover" />
                   <div className="min-w-0">
                     <Link href={`/listing/${l.slug}`} target="_blank" className="font-medium hover:text-brand">{l.title}</Link>
-                    <p className="font-display text-sm font-semibold tabular">{formatPrice(l.price, l.currency)}</p>
+                    <p className="font-display text-sm font-bold tabular">{formatPrice(l.price, l.currency)}</p>
                     {l.flagged_terms.length ? <Badge tone="danger">Flagged: {l.flagged_terms.join(", ")}</Badge> : null}
                     {l.moderation_note ? <p className="mt-1 text-xs text-ink-faint">Note: {l.moderation_note}</p> : null}
                   </div>

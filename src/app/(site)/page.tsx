@@ -22,25 +22,26 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="weave text-white">
-        <div className="mx-auto max-w-7xl px-4 pb-10 pt-10 sm:pb-14 sm:pt-14">
-          <h1 className="max-w-2xl font-display text-[2rem] font-bold leading-[1.1] tracking-tight sm:text-5xl">
-            What are you looking for today?
+      <section className="bg-brand text-white">
+        <div className="mx-auto max-w-7xl px-4 pb-9 pt-9 sm:pb-12 sm:pt-16">
+          <h1 className="max-w-3xl font-display text-[2.5rem] font-extrabold leading-[0.98] sm:text-[4.25rem]">
+            Everything Circle sells. None of the traffic.
           </h1>
-          <p className="mt-3 max-w-xl text-white/80">
-            Phones, cars, rooms to rent, generators, fabric and more, from people and shops across Ghana.
+          <p className="mt-4 max-w-xl text-[17px] leading-relaxed text-white/80">
+            Phones, cars, rooms to rent, generators and kente from people and shops in all 16 regions.
+            Chat with the seller here, and pay once you&apos;ve seen the item.
           </p>
-          <div className="mt-6 max-w-2xl text-ink">
+          <div className="mt-7 hidden max-w-2xl text-ink sm:block">
             <Suspense fallback={<div className="h-14 rounded-full bg-surface" />}>
               <SearchBar large />
             </Suspense>
           </div>
-          <ul className="mt-5 flex flex-wrap gap-2" aria-label="Popular searches">
+          <ul className="mt-6 flex flex-wrap gap-2" aria-label="Popular categories">
             {quickLinks.map((c) => (
               <li key={c.id}>
                 <Link
                   href={`/categories/${c.slug}`}
-                  className="inline-flex h-9 items-center rounded-full border border-white/25 px-3.5 text-sm font-medium text-white hover:bg-white hover:text-brand"
+                  className="inline-flex h-9 items-center rounded-full border border-white/30 px-3.5 text-sm font-medium text-white hover:bg-white hover:text-brand"
                 >
                   {c.name}
                 </Link>
@@ -48,25 +49,21 @@ export default async function HomePage() {
             ))}
           </ul>
         </div>
+        <div className="kente-strip" aria-hidden />
       </section>
 
       <div className="mx-auto max-w-7xl px-4">
-        <section className="py-8" aria-labelledby="cats">
-          <div className="mb-4 flex items-baseline justify-between">
-            <h2 id="cats" className="font-display text-xl font-semibold">Browse by category</h2>
-            <Link href="/categories" className="text-sm font-medium text-brand hover:underline">All categories</Link>
+        <section className="pb-4 pt-9" aria-labelledby="cats">
+          <div className="mb-3 flex items-baseline justify-between">
+            <h2 id="cats" className="font-display text-xl font-bold">Categories</h2>
+            <Link href="/categories" className="text-sm font-medium text-brand hover:underline">See all</Link>
           </div>
-          <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+          <ul className="grid grid-cols-2 gap-x-6 border-t border-line sm:grid-cols-3 lg:grid-cols-5">
             {categories.map((c) => (
-              <li key={c.id}>
-                <Link
-                  href={`/categories/${c.slug}`}
-                  className="flex h-full items-center gap-3 rounded-[var(--radius-card)] border border-line bg-surface p-3 hover:border-brand"
-                >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-brand-tint text-brand">
-                    <CategoryIcon name={c.icon} size={20} />
-                  </span>
-                  <span className="text-sm font-medium leading-tight">{c.name}</span>
+              <li key={c.id} className="border-b border-line">
+                <Link href={`/categories/${c.slug}`} className="group flex items-center gap-3 py-3.5 text-[15px] font-medium leading-tight hover:text-brand">
+                  <CategoryIcon name={c.icon} size={20} className="shrink-0 text-ink-faint group-hover:text-brand" />
+                  {c.name}
                 </Link>
               </li>
             ))}
@@ -91,7 +88,7 @@ export default async function HomePage() {
 
         <section className="my-10 grid gap-6 rounded-[var(--radius-card)] border border-line bg-surface p-6 sm:p-8 lg:grid-cols-[1.2fr_1fr]">
           <div>
-            <h2 className="font-display text-2xl font-semibold tracking-tight">Have something to sell?</h2>
+            <h2 className="font-display text-2xl font-bold">Have something to sell?</h2>
             <p className="mt-2 max-w-md text-ink-soft">
               Post an ad in a few minutes. It&apos;s free, buyers message you directly, and you choose whether to share your number.
             </p>
@@ -119,7 +116,7 @@ async function StoreRow() {
       <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
         <div>
           <div className="mb-4 flex items-baseline justify-between">
-            <h2 id="store" className="font-display text-xl font-semibold">From the QuestHub Store <span className="ml-1 text-xs font-normal text-ink-faint">Sold and delivered by us</span></h2>
+            <div><h2 id="store" className="font-display text-xl font-bold">QuestHub Store</h2><p className="text-sm text-ink-soft">New items we sell and deliver ourselves.</p></div>
             <Link href="/store" className="text-sm font-medium text-brand hover:underline">Shop all</Link>
           </div>
           {items.length ? (
@@ -133,7 +130,7 @@ async function StoreRow() {
         <Link href="/airtime" className="flex flex-col justify-between gap-4 rounded-[var(--radius-card)] bg-gold p-5 text-ink hover:brightness-[1.03]">
           <Smartphone size={28} aria-hidden />
           <div>
-            <h2 className="font-display text-2xl font-semibold leading-tight">Airtime & data in seconds</h2>
+            <h2 className="font-display text-2xl font-bold leading-tight">Airtime & data in seconds</h2>
             <p className="mt-1 text-sm">MTN, Telecel and AirtelTigo. Pay with Mobile Money.</p>
           </div>
           <span className="inline-flex h-10 w-fit items-center rounded-full bg-ink px-4 text-sm font-medium text-white">Top up now</span>
@@ -150,7 +147,7 @@ async function FeaturedShops() {
   return (
     <section className="py-6" aria-labelledby="shops">
       <div className="mb-4 flex items-baseline justify-between">
-        <h2 id="shops" className="font-display text-xl font-semibold">
+        <h2 id="shops" className="font-display text-xl font-bold">
           {featured.length ? "Featured shops" : "Shops on QuestHub"}
           {featured.length ? <span className="ml-2 text-xs font-normal text-ink-faint">Paid placements</span> : null}
         </h2>
@@ -167,7 +164,7 @@ async function Featured() {
   return (
     <section className="py-6" aria-labelledby="featured">
       <div className="mb-4 flex items-baseline gap-2">
-        <h2 id="featured" className="font-display text-xl font-semibold">Featured</h2>
+        <h2 id="featured" className="font-display text-xl font-bold">Featured</h2>
         <span className="text-xs text-ink-faint">Paid placements</span>
       </div>
       <ListingGrid>
@@ -188,7 +185,7 @@ async function Recent() {
   return (
     <section className="py-6" aria-labelledby="recent">
       <div className="mb-4 flex items-baseline justify-between">
-        <h2 id="recent" className="font-display text-xl font-semibold">Just added</h2>
+        <h2 id="recent" className="font-display text-xl font-bold">Just added</h2>
         <Link href="/search?sort=newest" className="text-sm font-medium text-brand hover:underline">See all</Link>
       </div>
       {items.length === 0 ? (
@@ -207,7 +204,7 @@ async function Recent() {
 function GridSkeleton({ title }: { title: string }) {
   return (
     <section className="py-6" aria-busy>
-      <h2 className="mb-4 font-display text-xl font-semibold">{title}</h2>
+      <h2 className="mb-4 font-display text-xl font-bold">{title}</h2>
       <ListingGrid>
         {Array.from({ length: 8 }, (_, i) => (
           <div key={i} className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">

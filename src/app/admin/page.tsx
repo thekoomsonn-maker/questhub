@@ -41,7 +41,7 @@ export default async function AdminOverview() {
           <Link key={q.label} href={q.href}>
             <Card className={`flex items-center justify-between p-5 hover:border-ink ${q.urgent ? "border-gold bg-gold-tint" : ""}`}>
               <span className="font-medium">{q.label}</span>
-              <span className="font-display text-3xl font-semibold tabular">{q.value}</span>
+              <span className="font-display text-3xl font-bold tabular">{q.value}</span>
             </Card>
           </Link>
         ))}
@@ -50,7 +50,7 @@ export default async function AdminOverview() {
         {tiles.map((t) => (
           <Card key={t.label} className="p-4">
             <p className="text-xs text-ink-soft">{t.label}</p>
-            <p className="mt-1 font-display text-2xl font-semibold tabular">{t.value}</p>
+            <p className="mt-1 font-display text-2xl font-bold tabular">{t.value}</p>
             {t.sub ? <p className="text-[11px] text-ink-faint">{t.sub}</p> : null}
           </Card>
         ))}

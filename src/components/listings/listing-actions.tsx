@@ -12,6 +12,7 @@ export function ContactActions({
   slug,
   title,
   canContact,
+  secondary = false,
   phoneAvailable,
   signedIn,
 }: {
@@ -19,6 +20,8 @@ export function ContactActions({
   slug: string;
   title: string;
   canContact: boolean;
+  /** Render as a secondary action when a stronger primary (Order online) sits above it. */
+  secondary?: boolean;
   phoneAvailable: boolean;
   signedIn: boolean;
 }) {
@@ -47,6 +50,7 @@ export function ContactActions({
       {canContact ? (
         <Button
           size="lg"
+          variant={secondary ? "secondary" : undefined}
           pending={pending}
           onClick={() =>
             start(async () => {
@@ -61,7 +65,7 @@ export function ContactActions({
       {phoneAvailable && canContact ? (
         phone ? (
           <div className="flex gap-2">
-            <a href={`tel:${phone.phone}`} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-[var(--radius-field)] border border-line-strong bg-surface font-display text-lg font-semibold tabular hover:bg-paper">
+            <a href={`tel:${phone.phone}`} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-[var(--radius-field)] border border-line-strong bg-surface font-display text-lg font-bold tabular hover:bg-paper">
               <Phone size={18} aria-hidden /> {phone.phone}
             </a>
             {waNumber ? (

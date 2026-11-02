@@ -37,7 +37,7 @@ export function CheckoutForm({ regions, items, subtotal, fees, defaults, disable
   return (
     <form action={action} className="grid gap-4 lg:grid-cols-[1fr_320px]" noValidate>
       <Card className="grid gap-4 p-5 sm:grid-cols-2">
-        <h2 className="font-display text-lg font-semibold sm:col-span-2">Delivery details</h2>
+        <h2 className="font-display text-lg font-bold sm:col-span-2">Delivery details</h2>
         {state && !state.ok ? <div className="sm:col-span-2"><FormMessage>{state.error}</FormMessage></div> : null}
         <Field id="name" label="Recipient name" required error={fe("name")}>
           <Input id="name" name="name" defaultValue={defaults.name} autoComplete="name" />
@@ -62,7 +62,7 @@ export function CheckoutForm({ regions, items, subtotal, fees, defaults, disable
         </Field>
       </Card>
       <Card className="h-fit p-5 lg:sticky lg:top-24">
-        <h2 className="font-display text-lg font-semibold">Order summary</h2>
+        <h2 className="font-display text-lg font-bold">Order summary</h2>
         <ul className="mt-3 space-y-2 text-sm">
           {items.map((i) => (
             <li key={i.name} className="flex justify-between gap-3"><span className="min-w-0 truncate">{i.quantity} × {i.name}</span><span className="tabular">{formatPrice(i.lineTotal)}</span></li>
@@ -71,7 +71,7 @@ export function CheckoutForm({ regions, items, subtotal, fees, defaults, disable
         <dl className="mt-4 space-y-1 border-t border-line pt-3 text-sm">
           <div className="flex justify-between"><dt>Subtotal</dt><dd className="tabular">{formatPrice(subtotal)}</dd></div>
           <div className="flex justify-between"><dt>Delivery</dt><dd className="tabular">{fee === null ? "Choose a region" : fee === 0 ? "Free" : formatPrice(fee)}</dd></div>
-          <div className="flex justify-between pt-2 text-base font-semibold"><dt>Total</dt><dd className="font-display tabular">{formatPrice(subtotal + (fee ?? 0))}</dd></div>
+          <div className="flex justify-between pt-2 text-base font-bold"><dt>Total</dt><dd className="font-display tabular">{formatPrice(subtotal + (fee ?? 0))}</dd></div>
         </dl>
         <div className="mt-4"><PaymentMethodPicker value={method} onChange={setMethod} options={paymentOptions} totalGhs={subtotal + (fee ?? 0)} /></div>
         <Button type="submit" size="lg" className="mt-4 w-full" pending={pending} disabled={disabled}>
