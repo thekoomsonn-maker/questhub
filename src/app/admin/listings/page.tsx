@@ -1,3 +1,4 @@
+import { requireStaff } from "@/lib/auth";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatPrice, statusLabel, timeAgo } from "@/lib/format";
@@ -12,6 +13,7 @@ const STATUSES = ["pending_review", "published", "rejected", "removed", "paused"
 const PAGE = 25;
 
 export default async function AdminListings({ searchParams }: PageProps<"/admin/listings">) {
+  await requireStaff("safety");
   const sp = await searchParams;
   const status = (STATUSES as readonly string[]).includes(String(sp.status)) ? (sp.status as (typeof STATUSES)[number]) : "pending_review";
   const q = typeof sp.q === "string" ? sp.q.trim().slice(0, 80) : "";

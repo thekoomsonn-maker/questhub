@@ -495,14 +495,14 @@ isOneToOne: true
                   ]
                 },"profiles": {
                   Row: {
-                    "avatar_path": string | null,"bio": string | null,"city": string | null,"created_at": string,"deletion_requested_at": string | null,"display_name": string,"id": string,"is_verified": boolean,"region_id": number | null,"role": Database["public"]['Enums']["user_role"],"status": Database["public"]['Enums']["account_status"],"suspended_reason": string | null,"updated_at": string,"username": string | null,"verified_at": string | null
+                    "avatar_path": string | null,"bio": string | null,"city": string | null,"created_at": string,"deletion_requested_at": string | null,"display_name": string,"id": string,"is_verified": boolean,"region_id": number | null,"role": Database["public"]['Enums']["user_role"],"staff_level": Database["public"]['Enums']["staff_level"] | null,"status": Database["public"]['Enums']["account_status"],"suspended_reason": string | null,"updated_at": string,"username": string | null,"verified_at": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "avatar_path"?: string | null,"bio"?: string | null,"city"?: string | null,"created_at"?: string,"deletion_requested_at"?: string | null,"display_name": string,"id": string,"is_verified"?: boolean,"region_id"?: number | null,"role"?: Database["public"]['Enums']["user_role"],"status"?: Database["public"]['Enums']["account_status"],"suspended_reason"?: string | null,"updated_at"?: string,"username"?: string | null,"verified_at"?: string | null
+                    "avatar_path"?: string | null,"bio"?: string | null,"city"?: string | null,"created_at"?: string,"deletion_requested_at"?: string | null,"display_name": string,"id": string,"is_verified"?: boolean,"region_id"?: number | null,"role"?: Database["public"]['Enums']["user_role"],"staff_level"?: Database["public"]['Enums']["staff_level"] | null,"status"?: Database["public"]['Enums']["account_status"],"suspended_reason"?: string | null,"updated_at"?: string,"username"?: string | null,"verified_at"?: string | null
                   }
                   Update: {
-                    "avatar_path"?: string | null,"bio"?: string | null,"city"?: string | null,"created_at"?: string,"deletion_requested_at"?: string | null,"display_name"?: string,"id"?: string,"is_verified"?: boolean,"region_id"?: number | null,"role"?: Database["public"]['Enums']["user_role"],"status"?: Database["public"]['Enums']["account_status"],"suspended_reason"?: string | null,"updated_at"?: string,"username"?: string | null,"verified_at"?: string | null
+                    "avatar_path"?: string | null,"bio"?: string | null,"city"?: string | null,"created_at"?: string,"deletion_requested_at"?: string | null,"display_name"?: string,"id"?: string,"is_verified"?: boolean,"region_id"?: number | null,"role"?: Database["public"]['Enums']["user_role"],"staff_level"?: Database["public"]['Enums']["staff_level"] | null,"status"?: Database["public"]['Enums']["account_status"],"suspended_reason"?: string | null,"updated_at"?: string,"username"?: string | null,"verified_at"?: string | null
                   }
                   Relationships: [
                     {
@@ -707,6 +707,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"site_banners": {
+                  Row: {
+                    "body": string | null,"created_at": string,"created_by": string | null,"ends_at": string | null,"id": string,"is_active": boolean,"link_label": string | null,"link_url": string | null,"placement": Database["public"]['Enums']["banner_placement"],"sort_order": number,"starts_at": string,"title": string,"tone": Database["public"]['Enums']["banner_tone"],"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body"?: string | null,"created_at"?: string,"created_by"?: string | null,"ends_at"?: string | null,"id"?: string,"is_active"?: boolean,"link_label"?: string | null,"link_url"?: string | null,"placement"?: Database["public"]['Enums']["banner_placement"],"sort_order"?: number,"starts_at"?: string,"title": string,"tone"?: Database["public"]['Enums']["banner_tone"],"updated_at"?: string
+                  }
+                  Update: {
+                    "body"?: string | null,"created_at"?: string,"created_by"?: string | null,"ends_at"?: string | null,"id"?: string,"is_active"?: boolean,"link_label"?: string | null,"link_url"?: string | null,"placement"?: Database["public"]['Enums']["banner_placement"],"sort_order"?: number,"starts_at"?: string,"title"?: string,"tone"?: Database["public"]['Enums']["banner_tone"],"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "site_banners_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"store_product_images": {
                   Row: {
                     "created_at": string,"id": string,"product_id": string,"sort_order": number,"storage_path": string
@@ -889,6 +909,16 @@ isOneToOne: false
 "admin_dashboard_stats":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
+"admin_find_user_by_email":
+{ Args: { "p_email": string }; Returns: {
+              "display_name": string,"id": string,"role": Database["public"]['Enums']["user_role"],"staff_level": Database["public"]['Enums']["staff_level"],"status": Database["public"]['Enums']["account_status"]
+            }[]
+                           },
+"admin_list_staff":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "created_at": string,"display_name": string,"email": string,"id": string,"last_sign_in_at": string,"staff_level": Database["public"]['Enums']["staff_level"]
+            }[]
+                           },
 "admin_list_users":
 { Args: { "p_limit"?: number,"p_offset"?: number,"p_query"?: string,"p_role"?: Database["public"]['Enums']["user_role"],"p_status"?: Database["public"]['Enums']["account_status"] }; Returns: {
               "created_at": string,"deletion_requested_at": string,"display_name": string,"email": string,"id": string,"is_verified": boolean,"last_sign_in_at": string,"listing_count": number,"open_reports": number,"role": Database["public"]['Enums']["user_role"],"status": Database["public"]['Enums']["account_status"],"suspended_reason": string,"total_count": number,"username": string
@@ -905,6 +935,9 @@ isOneToOne: false
 "admin_retry_topup":
 { Args: { "p_note": string,"p_order": string }; Returns: undefined
                            },
+"admin_sales_report":
+{ Args: { "p_days"?: number }; Returns: Json
+                           },
 "admin_set_review_hidden":
 { Args: { "p_hidden": boolean,"p_reason": string,"p_review": string }; Returns: undefined
                            },
@@ -913,6 +946,9 @@ isOneToOne: false
                            },
 "admin_set_shop_status":
 { Args: { "p_reason": string,"p_shop": string,"p_status": Database["public"]['Enums']["shop_status"] }; Returns: undefined
+                           },
+"admin_set_staff":
+{ Args: { "p_level": Database["public"]['Enums']["staff_level"],"p_reason"?: string,"p_user": string }; Returns: undefined
                            },
 "admin_set_user_role":
 { Args: { "p_reason": string,"p_role": Database["public"]['Enums']["user_role"],"p_user": string }; Returns: undefined
@@ -928,6 +964,11 @@ isOneToOne: false
                            },
 "admin_update_report":
 { Args: { "p_note": string,"p_report": string,"p_status": Database["public"]['Enums']["report_status"] }; Returns: undefined
+                           },
+"admin_vendor_report":
+{ Args: { "p_days"?: number }; Returns: {
+              "cancelled": number,"completed": number,"completion_rate": number,"declined": number,"featured_until": string,"is_verified": boolean,"live_listings": number,"median_confirm_minutes": number,"name": string,"open_orders": number,"orderable_listings": number,"orders": number,"sales": number,"shop_id": string,"slug": string,"status": Database["public"]['Enums']["shop_status"]
+            }[]
                            },
 "become_seller":
 { Args: Record<PropertyKey, never>; Returns: undefined
@@ -1029,11 +1070,17 @@ isOneToOne: false
 "log_admin_action":
 { Args: { "p_action": string,"p_meta"?: Json,"p_reason": string,"p_target_id": string,"p_target_type": string }; Returns: undefined
                            },
+"log_export":
+{ Args: { "p_days": number,"p_kind": string,"p_rows": number }; Returns: undefined
+                           },
 "log_order_event":
 { Args: { "p_note"?: string,"p_order": string,"p_status": string }; Returns: undefined
                            },
 "mark_conversation_read":
 { Args: { "p_conversation": string }; Returns: undefined
+                           },
+"my_staff_level":
+{ Args: Record<PropertyKey, never>; Returns: Database["public"]['Enums']["staff_level"]
                            },
 "notify":
 { Args: { "p_body": string,"p_link": string,"p_ref"?: string,"p_title": string,"p_type": string,"p_user": string }; Returns: undefined
@@ -1068,6 +1115,9 @@ isOneToOne: false
 "require_admin":
 { Args: Record<PropertyKey, never>; Returns: undefined
                            },
+"require_staff":
+{ Args: { "p_area": string }; Returns: undefined
+                           },
 "restock_vendor_order":
 { Args: { "p_order": string }; Returns: undefined
                            },
@@ -1101,6 +1151,9 @@ isOneToOne: false
 "slugify":
 { Args: { "input": string }; Returns: string
                            },
+"staff_can":
+{ Args: { "p_area": string }; Returns: boolean
+                           },
 "start_conversation":
 { Args: { "p_listing": string }; Returns: string
                            },
@@ -1121,7 +1174,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "account_status": "active"|"suspended","attribute_type": "text"|"number"|"select"|"boolean","listing_condition": "new"|"used"|"refurbished"|"not_applicable","listing_status": "draft"|"pending_review"|"published"|"paused"|"sold"|"rejected"|"expired"|"removed","mobile_network": "mtn"|"telecel"|"airteltigo","order_kind": "goods"|"topup","order_status": "pending_payment"|"paid"|"processing"|"shipped"|"delivered"|"cancelled"|"failed"|"refund_due"|"refunded","payment_status": "unpaid"|"pending"|"paid"|"failed"|"refunded"|"test","promotion_kind": "featured"|"boost"|"featured_shop","promotion_status": "pending_payment"|"active"|"expired"|"cancelled","report_reason": "scam"|"fake_or_misleading"|"prohibited_item"|"spam"|"harassment"|"impersonation"|"other","report_status": "open"|"reviewing"|"resolved"|"dismissed","shop_status": "pending"|"active"|"suspended","topup_status": "waiting_payment"|"sending"|"delivered"|"failed","user_role": "buyer"|"seller"|"admin","vendor_order_status": "requested"|"confirmed"|"out_for_delivery"|"ready_for_pickup"|"completed"|"declined"|"cancelled","vendor_payment_method": "pay_on_delivery"|"momo_to_vendor"
+            "account_status": "active"|"suspended","attribute_type": "text"|"number"|"select"|"boolean","banner_placement": "home"|"store","banner_tone": "brand"|"gold"|"ink","listing_condition": "new"|"used"|"refurbished"|"not_applicable","listing_status": "draft"|"pending_review"|"published"|"paused"|"sold"|"rejected"|"expired"|"removed","mobile_network": "mtn"|"telecel"|"airteltigo","order_kind": "goods"|"topup","order_status": "pending_payment"|"paid"|"processing"|"shipped"|"delivered"|"cancelled"|"failed"|"refund_due"|"refunded","payment_status": "unpaid"|"pending"|"paid"|"failed"|"refunded"|"test","promotion_kind": "featured"|"boost"|"featured_shop","promotion_status": "pending_payment"|"active"|"expired"|"cancelled","report_reason": "scam"|"fake_or_misleading"|"prohibited_item"|"spam"|"harassment"|"impersonation"|"other","report_status": "open"|"reviewing"|"resolved"|"dismissed","shop_status": "pending"|"active"|"suspended","staff_level": "owner"|"manager"|"moderator","topup_status": "waiting_payment"|"sending"|"delivered"|"failed","user_role": "buyer"|"seller"|"admin","vendor_order_status": "requested"|"confirmed"|"out_for_delivery"|"ready_for_pickup"|"completed"|"declined"|"cancelled","vendor_payment_method": "pay_on_delivery"|"momo_to_vendor"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -1241,7 +1294,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "account_status": ["active", "suspended"],"attribute_type": ["text", "number", "select", "boolean"],"listing_condition": ["new", "used", "refurbished", "not_applicable"],"listing_status": ["draft", "pending_review", "published", "paused", "sold", "rejected", "expired", "removed"],"mobile_network": ["mtn", "telecel", "airteltigo"],"order_kind": ["goods", "topup"],"order_status": ["pending_payment", "paid", "processing", "shipped", "delivered", "cancelled", "failed", "refund_due", "refunded"],"payment_status": ["unpaid", "pending", "paid", "failed", "refunded", "test"],"promotion_kind": ["featured", "boost", "featured_shop"],"promotion_status": ["pending_payment", "active", "expired", "cancelled"],"report_reason": ["scam", "fake_or_misleading", "prohibited_item", "spam", "harassment", "impersonation", "other"],"report_status": ["open", "reviewing", "resolved", "dismissed"],"shop_status": ["pending", "active", "suspended"],"topup_status": ["waiting_payment", "sending", "delivered", "failed"],"user_role": ["buyer", "seller", "admin"],"vendor_order_status": ["requested", "confirmed", "out_for_delivery", "ready_for_pickup", "completed", "declined", "cancelled"],"vendor_payment_method": ["pay_on_delivery", "momo_to_vendor"]
+            "account_status": ["active", "suspended"],"attribute_type": ["text", "number", "select", "boolean"],"banner_placement": ["home", "store"],"banner_tone": ["brand", "gold", "ink"],"listing_condition": ["new", "used", "refurbished", "not_applicable"],"listing_status": ["draft", "pending_review", "published", "paused", "sold", "rejected", "expired", "removed"],"mobile_network": ["mtn", "telecel", "airteltigo"],"order_kind": ["goods", "topup"],"order_status": ["pending_payment", "paid", "processing", "shipped", "delivered", "cancelled", "failed", "refund_due", "refunded"],"payment_status": ["unpaid", "pending", "paid", "failed", "refunded", "test"],"promotion_kind": ["featured", "boost", "featured_shop"],"promotion_status": ["pending_payment", "active", "expired", "cancelled"],"report_reason": ["scam", "fake_or_misleading", "prohibited_item", "spam", "harassment", "impersonation", "other"],"report_status": ["open", "reviewing", "resolved", "dismissed"],"shop_status": ["pending", "active", "suspended"],"staff_level": ["owner", "manager", "moderator"],"topup_status": ["waiting_payment", "sending", "delivered", "failed"],"user_role": ["buyer", "seller", "admin"],"vendor_order_status": ["requested", "confirmed", "out_for_delivery", "ready_for_pickup", "completed", "declined", "cancelled"],"vendor_payment_method": ["pay_on_delivery", "momo_to_vendor"]
           }
         }
 } as const

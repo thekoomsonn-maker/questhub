@@ -3,6 +3,7 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/supabase/database.types";
+import { staffCan, staffLevelOf, type StaffArea, type StaffLevel } from "@/lib/staff";
 
 export type Profile = Tables<"profiles">;
 export type Viewer = { id: string; email: string | undefined; profile: Profile };
@@ -39,6 +40,14 @@ export async function requireAdmin(): Promise<Viewer> {
   const viewer = await requireViewer("/admin");
   if (viewer.profile.role !== "admin" || viewer.profile.status !== "active") redirect("/");
   return viewer;
+}
+
+/** Admin pages limited to one staff area; others are sent to the overview. */
+export async function requireStaff(area: StaffArea): Promise<Viewer & { level: StaffLevel }> {
+  const viewer = await requireAdmin();
+  const level = staffLevelOf(viewer.profile)!;
+  if (!staffCan(level, area)) redirect("/admin?denied=1");
+  return { ...viewer, level };
 }
 
 export function isSafeRedirect(path: string | null | undefined): path is string {

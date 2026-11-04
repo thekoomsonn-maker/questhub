@@ -1,3 +1,4 @@
+import { requireStaff } from "@/lib/auth";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatPrice } from "@/lib/format";
@@ -7,6 +8,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { AdminHeader, Table } from "../ui";
 
 export default async function AdminProducts() {
+  await requireStaff("commerce");
   const supabase = await createClient();
   const { data } = await supabase
     .from("store_products")

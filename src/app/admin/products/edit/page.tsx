@@ -1,3 +1,4 @@
+import { requireStaff } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
@@ -7,6 +8,7 @@ import { AdminHeader } from "../../ui";
 import { ProductForm } from "./product-form";
 
 export default async function EditProduct({ searchParams }: PageProps<"/admin/products/edit">) {
+  await requireStaff("commerce");
   const id = (await searchParams).id;
   const supabase = await createClient();
   const tree = await getCategoryTree();

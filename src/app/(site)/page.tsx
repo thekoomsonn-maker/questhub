@@ -14,6 +14,7 @@ import { ListingCard, ListingGrid } from "@/components/listings/listing-card";
 import { CategoryIcon } from "@/components/listings/category-icon";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState, Skeleton } from "@/components/ui/misc";
+import { SiteBanners } from "@/components/site-banner";
 
 export default async function HomePage() {
   const categories = await getCategoryTree();
@@ -53,6 +54,9 @@ export default async function HomePage() {
       </section>
 
       <div className="mx-auto max-w-7xl px-4">
+        <Suspense fallback={null}>
+          <SiteBanners placement="home" className="pt-6" />
+        </Suspense>
         <section className="pb-4 pt-9" aria-labelledby="cats">
           <div className="mb-3 flex items-baseline justify-between">
             <h2 id="cats" className="font-display text-xl font-bold">Categories</h2>

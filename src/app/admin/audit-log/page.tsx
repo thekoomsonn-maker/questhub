@@ -1,3 +1,4 @@
+import { requireStaff } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, formatTime } from "@/lib/format";
 import { Input } from "@/components/ui/field";
@@ -7,6 +8,7 @@ import { AdminHeader, FilterBar, Pager, Table } from "../ui";
 const PAGE = 50;
 
 export default async function AuditLog({ searchParams }: PageProps<"/admin/audit-log">) {
+  await requireStaff("owner");
   const sp = await searchParams;
   const action = typeof sp.action === "string" ? sp.action.trim().slice(0, 60) : "";
   const page = Math.max(1, Number(sp.page) || 1);

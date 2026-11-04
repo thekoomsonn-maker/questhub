@@ -10,6 +10,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/misc";
 import { Input } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
+import { SiteBanners } from "@/components/site-banner";
 
 export const metadata: Metadata = { title: "QuestHub Store", description: "Phones, accessories, appliances and more, sold and delivered by QuestHub. Pay with Mobile Money or card." };
 
@@ -52,6 +53,8 @@ export default async function StorePage({ searchParams }: PageProps<"/store">) {
         </div>
         <ButtonLink href="/airtime" variant="secondary" size="lg"><Smartphone size={18} aria-hidden /> Buy airtime & data</ButtonLink>
       </section>
+
+      <SiteBanners placement="store" className="mb-5" />
 
       <form method="get" action="/store" className="mb-4 flex gap-2" role="search">
         {catSlug ? <input type="hidden" name="category" value={catSlug} /> : null}

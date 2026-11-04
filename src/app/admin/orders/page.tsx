@@ -1,3 +1,4 @@
+import { requireStaff } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, formatPrice, formatTime } from "@/lib/format";
 import { Badge } from "@/components/ui/misc";
@@ -13,6 +14,7 @@ const TABS = [
 ] as const;
 
 export default async function AdminOrders({ searchParams }: PageProps<"/admin/orders">) {
+  await requireStaff("commerce");
   const sp = await searchParams;
   const tab = TABS.find((t) => t.key === (sp.status ?? "")) ?? TABS[0];
   const supabase = await createClient();

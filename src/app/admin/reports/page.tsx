@@ -1,3 +1,4 @@
+import { requireStaff } from "@/lib/auth";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { timeAgo } from "@/lib/format";
@@ -9,6 +10,7 @@ const reasons: Record<string, string> = { scam: "Scam", fake_or_misleading: "Fak
 const STATUSES = ["open", "reviewing", "resolved", "dismissed"] as const;
 
 export default async function AdminReports({ searchParams }: PageProps<"/admin/reports">) {
+  await requireStaff("safety");
   const sp = await searchParams;
   const status = (STATUSES as readonly string[]).includes(String(sp.status)) ? (sp.status as (typeof STATUSES)[number]) : "open";
   const supabase = await createClient();

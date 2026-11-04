@@ -1,3 +1,4 @@
+import { requireStaff } from "@/lib/auth";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/format";
@@ -9,6 +10,7 @@ import { ShopAdminActions } from "./shop-admin-actions";
 const STATUSES = ["pending", "active", "suspended"] as const;
 
 export default async function AdminShops({ searchParams }: PageProps<"/admin/shops">) {
+  await requireStaff("safety");
   const sp = await searchParams;
   const status = (STATUSES as readonly string[]).includes(String(sp.status)) ? (sp.status as (typeof STATUSES)[number]) : "pending";
   const supabase = await createClient();

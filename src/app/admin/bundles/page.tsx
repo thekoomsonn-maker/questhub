@@ -1,8 +1,10 @@
+import { requireStaff } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { AdminHeader } from "../ui";
 import { BundleEditor } from "./bundle-editor";
 
 export default async function AdminBundles() {
+  await requireStaff("commerce");
   const supabase = await createClient();
   const { data } = await supabase.from("topup_bundles").select("*").order("network").order("sort_order").order("price");
   return (

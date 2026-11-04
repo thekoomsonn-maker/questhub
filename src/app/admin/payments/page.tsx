@@ -1,3 +1,4 @@
+import { requireStaff } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 import { formatDate, formatPrice } from "@/lib/format";
@@ -6,6 +7,7 @@ import { FormMessage } from "@/components/ui/field";
 import { AdminHeader, Table } from "../ui";
 
 export default async function AdminPayments() {
+  await requireStaff("owner");
   const supabase = await createClient();
   const { data } = await supabase
     .from("payments")

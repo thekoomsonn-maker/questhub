@@ -1,3 +1,4 @@
+import { requireStaff } from "@/lib/auth";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, formatPrice } from "@/lib/format";
@@ -6,6 +7,7 @@ import { AdminHeader, Table } from "../ui";
 import { PlanRow, PromotionActions } from "./promotion-controls";
 
 export default async function AdminPromotions() {
+  await requireStaff("commerce");
   const supabase = await createClient();
   const [{ data: plans }, { data: promos }, { data: testMode }] = await Promise.all([
     supabase.from("promotion_plans").select("*").order("sort_order"),

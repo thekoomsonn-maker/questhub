@@ -37,6 +37,24 @@ Built with Next.js 16 (App Router), React 19, TypeScript (strict), Tailwind CSS 
 - **Store**: product catalogue with discounts and stock, cart, checkout with delivery fees by region (free over a threshold), stock reserved for 45 minutes until payment, order history and timeline, admin fulfilment (packing → shipped → delivered, refunds).
 - **Airtime and data**: network detected from the number (with override for ported numbers), preset or custom airtime amounts, admin-managed data bundle catalogue, automatic delivery after payment, failures flagged for retry or refund.
 
+## Admin and staff roles
+
+The admin area (`/admin`) is the business back office.
+
+- **Dashboard:** verified revenue (store and top-ups) by day with a 7, 30 or 90-day view, change against the previous period, best sellers, top-up delivery rate by network, orders by status, and a work queue (orders to ship, refunds due, low stock, listings to review, reports). Test payments are never counted as revenue.
+- **Vendor performance:** per shop, orders, completion rate, sales, declines and the typical time to confirm an order.
+- **Banners:** scheduled announcements on the home page or the store.
+- **Exports:** CSV downloads of orders, vendor orders, vendor performance, listings, payments and users. Each download is written to the audit log, and cells are escaped against spreadsheet formula injection.
+- **Staff:** three levels, enforced in the database (`staff_can()`), not just hidden in the menu.
+
+| Level | Can do |
+|---|---|
+| Owner | Everything, including staff, settings and payments |
+| Manager | Store, orders, vendors, promotions, banners, categories, sales reports, moderation |
+| Moderator | Listings, reports, users and shops |
+
+Admins created before staff levels existed count as owners. Add staff from **Admin → Staff** using the email of an existing QuestHub account.
+
 ## Vendor shops
 
 - One shop per seller at `/shop/<name>`, reviewed by an admin before it's public (Admin → Shops; can be switched off in Settings). Admins can verify a business and feature it.

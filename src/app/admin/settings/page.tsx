@@ -1,8 +1,10 @@
+import { requireStaff } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { AdminHeader } from "../ui";
 import { SettingRow } from "./setting-row";
 
 export default async function AdminSettings() {
+  await requireStaff("owner");
   const supabase = await createClient();
   const { data } = await supabase.from("platform_settings").select("key,value,description,updated_at").order("key");
   return (

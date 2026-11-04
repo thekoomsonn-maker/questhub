@@ -1,8 +1,10 @@
+import { requireStaff } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { AdminHeader } from "../ui";
 import { CategoryEditor } from "./category-editor";
 
 export default async function AdminCategories() {
+  await requireStaff("commerce");
   const supabase = await createClient();
   const [{ data: cats }, { data: attrs }, { data: listings }] = await Promise.all([
     supabase.from("categories").select("*").order("sort_order").order("name"),

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { requireAdmin } from "@/lib/auth";
+import { requireAdmin, requireStaff } from "@/lib/auth";
 import { formatDate, timeAgo } from "@/lib/format";
 import { Badge } from "@/components/ui/misc";
 import { Input, Select } from "@/components/ui/field";
@@ -10,6 +10,7 @@ import { UserActions } from "./user-actions";
 const PAGE = 30;
 
 export default async function AdminUsers({ searchParams }: PageProps<"/admin/users">) {
+  await requireStaff("safety");
   const viewer = await requireAdmin();
   const sp = await searchParams;
   const q = typeof sp.q === "string" ? sp.q.slice(0, 80) : "";
